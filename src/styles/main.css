@@ -301,3 +301,59 @@ h1, h2, h3 {
         font-size: 1rem !important;
     }
 }
+
+/* Admin Dashboard responsive fixes */
+@media (max-width: 768px) {
+    /* Stack charts vertically on tablets and mobile */
+    .charts-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    /* Make summary cards stack on smaller screens */
+    .summary-cards {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+    
+    /* Ensure charts don't overflow */
+    .charts-grid > div {
+        overflow: hidden;
+        min-width: 0;
+    }
+    
+    /* Better responsive layout for admin dashboard */
+    .admin-dashboard-container {
+        padding: 1rem !important;
+    }
+    
+    /* Fix analytics charts overflow */
+    .admin-dashboard svg {
+        max-width: 100% !important;
+        width: 100% !important;
+        height: auto !important;
+    }
+    
+    /* Ensure chart containers are properly contained */
+    .admin-dashboard .charts-grid > div {
+        padding: 1rem !important;
+        overflow: hidden;
+    }
+}
+
+@media (max-width: 1024px) {
+    /* Tablet landscape mode */
+    .charts-grid {
+        gap: 1rem !important;
+    }
+    
+    /* Adjust chart containers for better fit */
+    .charts-grid > div {
+        min-width: 0; /* Allow shrinking */
+        overflow: hidden;
+    }
+    
+    /* Reduce chart sizes for tablets */
+    .admin-dashboard svg {
+        max-width: 90% !important;
+    }
+}

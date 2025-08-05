@@ -573,7 +573,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
             minHeight: '100vh',
             background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
             padding: '1.5rem'
-        }}>
+        }} className="admin-dashboard-container admin-dashboard">
             <div style={{
                 background: 'rgba(255, 255, 255, 0.95)',
                 borderRadius: '20px',
@@ -807,7 +807,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                             gridTemplateColumns: 'repeat(3, 1fr)',
                             gap: '1.5rem',
                             marginBottom: '2rem'
-                        }}>
+                        }} className="summary-cards">
                             <div style={{
                                 background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%)',
                                 padding: '1.5rem',
@@ -869,7 +869,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                             gridTemplateColumns: '1fr 1fr',
                             gap: '1.5rem',
                             marginBottom: '2rem'
-                        }}>
+                        }} className="charts-grid">
                             <BarChart 
                                 data={chartData.topItems} 
                                 title="Top Selling Items" 
