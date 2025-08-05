@@ -426,13 +426,36 @@ const POSInterface: React.FC<POSInterfaceProps> = ({
                 flex: isTablet ? 'none' : 1, 
                 padding: isTablet ? '0.8rem' : '1rem', 
                 backgroundColor: '#f9f9f9',
-                minHeight: isTablet ? '40vh' : 'auto'
+                minHeight: isTablet ? '40vh' : 'auto',
+                display: 'flex',
+                flexDirection: 'column',
+                height: isTablet ? '40vh' : '100%'
             }}>
-                <h3 style={{ fontSize: isTablet ? '1.2rem' : '1.5rem' }}>Current Order</h3>
+                <h3 style={{ 
+                    fontSize: isTablet ? '1.2rem' : '1.5rem',
+                    margin: '0 0 1rem 0',
+                    flexShrink: 0
+                }}>Current Order</h3>
                 
-                <div style={{ marginBottom: '1rem' }}>
-                    <label style={{ display: 'block', marginBottom: '0.75rem', fontWeight: 'bold', fontSize: '1rem', color: '#333' }}>Order Type:</label>
-                    <div style={{ display: 'flex', gap: '0', width: '100%', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', borderRadius: '8px', overflow: 'hidden' }}>
+                <div style={{ 
+                    marginBottom: '1rem',
+                    flexShrink: 0
+                }}>
+                    <label style={{ 
+                        display: 'block', 
+                        marginBottom: '0.5rem', 
+                        fontWeight: 'bold', 
+                        fontSize: isTablet ? '0.9rem' : '1rem', 
+                        color: '#333' 
+                    }}>Order Type:</label>
+                    <div style={{ 
+                        display: 'flex', 
+                        gap: '0', 
+                        width: '100%', 
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)', 
+                        borderRadius: '8px', 
+                        overflow: 'hidden' 
+                    }}>
                         <button
                             onClick={() => setOrderType('dine-in')}
                             style={{
@@ -569,7 +592,17 @@ const POSInterface: React.FC<POSInterfaceProps> = ({
                     )}
                 </div>
 
-                <div style={{ marginBottom: '1rem', maxHeight: '400px', overflowY: 'auto' }}>
+                {/* Cart Items - Scrollable Section */}
+                <div style={{ 
+                    marginBottom: '1rem', 
+                    maxHeight: isTablet ? '25vh' : '300px', 
+                    overflowY: 'auto',
+                    flex: 1,
+                    border: '1px solid #e0e0e0',
+                    borderRadius: '8px',
+                    padding: '0.5rem',
+                    backgroundColor: 'white'
+                }}>
                     {Object.keys(cart).length === 0 ? (
                         <p style={{ color: '#666', fontStyle: 'italic' }}>Cart is empty</p>
                     ) : (
@@ -626,8 +659,24 @@ const POSInterface: React.FC<POSInterfaceProps> = ({
                     )}
                 </div>
 
-                <div style={{ borderTop: '2px solid #ddd', paddingTop: '1rem' }}>
-                    <div style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '1rem' }}>
+                {/* Checkout Section - Sticky Footer */}
+                <div style={{ 
+                    borderTop: '2px solid #ddd', 
+                    paddingTop: '1rem',
+                    backgroundColor: '#f9f9f9',
+                    marginTop: 'auto',
+                    flexShrink: 0
+                }}>
+                    <div style={{ 
+                        fontSize: isTablet ? '1.1rem' : '1.2rem', 
+                        fontWeight: 'bold', 
+                        marginBottom: '1rem',
+                        textAlign: 'center',
+                        padding: '0.5rem',
+                        backgroundColor: 'white',
+                        borderRadius: '6px',
+                        border: '2px solid #4caf50'
+                    }}>
                         Total: ₱{calculateTotal().toFixed(2)}
                     </div>
                     
@@ -636,14 +685,19 @@ const POSInterface: React.FC<POSInterfaceProps> = ({
                         disabled={Object.keys(cart).length === 0}
                         style={{
                             width: '100%',
-                            padding: '1rem',
+                            padding: isTablet ? '1.2rem' : '1rem',
                             backgroundColor: Object.keys(cart).length === 0 ? '#ccc' : '#4caf50',
                             color: 'white',
                             border: 'none',
-                            borderRadius: '4px',
-                            fontSize: '1.1rem',
+                            borderRadius: '8px',
+                            fontSize: isTablet ? '1.2rem' : '1.1rem',
                             fontWeight: 'bold',
-                            cursor: Object.keys(cart).length === 0 ? 'not-allowed' : 'pointer'
+                            cursor: Object.keys(cart).length === 0 ? 'not-allowed' : 'pointer',
+                            boxShadow: Object.keys(cart).length === 0 ? 'none' : '0 4px 8px rgba(76, 175, 80, 0.3)',
+                            transition: 'all 0.2s ease',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px',
+                            minHeight: isTablet ? '60px' : '50px'
                         }}
                     >
                         Process Order
