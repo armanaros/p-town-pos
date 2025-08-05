@@ -22,6 +22,28 @@ const AppContent = () => {
     const [cashierId, setCashierId] = useState<string>('');
     const [cashierRole, setCashierRole] = useState<string>('');
 
+    // Load authentication state from localStorage on component mount
+    useEffect(() => {
+        const savedAuth = localStorage.getItem('ptownAuth');
+        if (savedAuth) {
+            try {
+                const authData = JSON.parse(savedAuth);
+                if (authData.isAuthenticated && authData.userRole) {
+                    setIsAuthenticated(true);
+                    setUserRole(authData.userRole);
+                    setCurrentState('dashboard');
+                    if (authData.cashierName) setCashierName(authData.cashierName);
+                    if (authData.cashierId) setCashierId(authData.cashierId);
+                    if (authData.cashierRole) setCashierRole(authData.cashierRole);
+                }
+            } catch (error) {
+                console.error('Error loading auth state:', error);
+                localStorage.removeItem('ptownAuth');
+            }
+        }
+        setLoading(false);
+    }, []);
+
     const handleRoleSelection = (role: 'admin' | 'cashier') => {
         setUserRole(role);
         setCurrentState('login');
@@ -40,6 +62,16 @@ const AppContent = () => {
             if (role) {
                 setCashierRole(role);
             }
+            
+            // Save authentication state to localStorage
+            const authData = {
+                isAuthenticated: true,
+                userRole: userRole,
+                cashierName: name || '',
+                cashierId: id || '',
+                cashierRole: role || ''
+            };
+            localStorage.setItem('ptownAuth', JSON.stringify(authData));
         }
     };
 
@@ -51,18 +83,40 @@ const AppContent = () => {
         setCashierName('');
         setCashierId('');
         setCashierRole('');
+        
+        // Clear authentication state from localStorage
+        localStorage.removeItem('ptownAuth');
     };
 
     const handleBackToHome = () => {
         setCurrentState('home');
         setUserRole(null);
         setIsAuthenticated(false);
+        
+        // Clear authentication state from localStorage
+        localStorage.removeItem('ptownAuth');
     };
 
     useEffect(() => {
         // No need to fetch mock data anymore - using real data from context
         setLoading(false);
     }, [isAuthenticated, userRole]);
+
+    // Show loading spinner while checking authentication
+    if (loading) {
+        return (
+            <div style={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                height: '100vh',
+                fontSize: '18px',
+                color: '#666'
+            }}>
+                Loading...
+            </div>
+        );
+    }
 
     // Render based on current state
     if (currentState === 'home') {
