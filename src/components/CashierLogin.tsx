@@ -92,7 +92,7 @@ const CashierLogin: React.FC<CashierLoginProps> = ({ onLogin, onBackToHome }) =>
                 maxWidth: '500px',
                 position: 'relative',
                 border: '1px solid rgba(255, 255, 255, 0.3)'
-            }}>
+            }} className="login-container">
                 {/* Logo and header */}
                 <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
                     <Logo 
@@ -104,6 +104,7 @@ const CashierLogin: React.FC<CashierLoginProps> = ({ onLogin, onBackToHome }) =>
                             width: '240px',
                             height: '200px'
                         }}
+                        className="logo"
                     />
                     <h2 style={{ 
                         margin: '0 0 0.5rem 0', 
@@ -304,20 +305,19 @@ const CashierLogin: React.FC<CashierLoginProps> = ({ onLogin, onBackToHome }) =>
                 >
                     ← Back to Home
                 </button>
-            </div>
-            
-            {/* Footer */}
-            <div style={{
-                position: 'absolute',
-                bottom: '20px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                color: 'rgba(255, 255, 255, 0.8)',
-                fontSize: '0.9rem',
-                textAlign: 'center',
-                textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)'
-            }}>
-                © 2025 P-Town Point of Sale System
+                
+                {/* Footer - moved inside container */}
+                <div style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '0.8rem',
+                    textAlign: 'center',
+                    textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
+                    marginTop: '2rem',
+                    paddingTop: '1rem',
+                    borderTop: '1px solid rgba(255, 255, 255, 0.2)'
+                }}>
+                    © 2025 P-Town Point of Sale System
+                </div>
             </div>
         </div>
     );
