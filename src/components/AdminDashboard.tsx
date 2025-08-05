@@ -345,7 +345,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                 <h3 style={{ color: '#1e293b', marginBottom: '1rem', fontSize: '1.2rem', fontWeight: '600' }}>
                     {title}
                 </h3>
-                <svg width="100%" height={height} style={{ overflow: 'visible', maxWidth: `${width}px` }} viewBox={`0 0 ${width} ${height}`}>
+                <div style={{ overflow: 'hidden', width: '100%', display: 'flex', justifyContent: 'center' }}>
+                    <svg width="100%" height={height} style={{ overflow: 'visible', maxWidth: `${width}px` }} viewBox={`0 0 ${width} ${height}`}>
                     <defs>
                         <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                             <stop offset="0%" stopColor="rgba(59, 130, 246, 0.8)" />
@@ -421,6 +422,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                         </g>
                     ))}
                 </svg>
+                </div>
             </div>
         );
     };

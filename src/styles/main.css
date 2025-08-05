@@ -349,6 +349,55 @@ h1, h2, h3 {
     }
 }
 
+/* iPad 10 specific fixes (1080x810 in landscape, 810x1080 in portrait) */
+@media (max-width: 1080px) and (min-width: 769px) {
+    /* iPad specific chart fixes */
+    .admin-dashboard .charts-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+        overflow: hidden;
+        width: 100%;
+    }
+    
+    .admin-dashboard .charts-grid > div {
+        overflow: hidden !important;
+        max-width: 100% !important;
+        padding: 1rem !important;
+        margin: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    .admin-dashboard svg {
+        max-width: 100% !important;
+        width: 100% !important;
+        height: auto !important;
+        display: block !important;
+        margin: 0 auto !important;
+    }
+    
+    /* Force containers to respect boundaries */
+    .admin-dashboard-container {
+        overflow-x: hidden !important;
+        padding: 1rem !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* Summary cards responsive for iPad */
+    .summary-cards {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+    
+    /* Aggressive chart containment for iPad */
+    .admin-dashboard .charts-grid > div > div {
+        max-width: 100% !important;
+        overflow: hidden !important;
+    }
+}
+
 @media (max-width: 1024px) {
     /* Tablet landscape mode */
     .charts-grid {
@@ -371,5 +420,10 @@ h1, h2, h3 {
     /* Additional container constraints */
     .admin-dashboard {
         overflow-x: hidden;
+    }
+    
+    /* Force single column layout for better iPad experience */
+    .admin-dashboard .charts-grid {
+        grid-template-columns: 1fr !important;
     }
 }
