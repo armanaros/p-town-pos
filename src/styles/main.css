@@ -3,6 +3,18 @@ body {
     background-color: #f8f8f8;
     margin: 0;
     padding: 0;
+    /* Better text rendering on iPad */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Prevent zoom on input focus */
+    -webkit-text-size-adjust: 100%;
+    /* Better touch targets */
+    touch-action: manipulation;
+}
+
+/* Base responsive design */
+* {
+    box-sizing: border-box;
 }
 
 h1, h2, h3 {
@@ -13,23 +25,44 @@ h1, h2, h3 {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
+    /* Responsive padding */
+    padding: clamp(10px, 2vw, 20px);
 }
 
+/* Table improvements for tablets */
 .table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    /* Better scrolling on tablets */
+    overflow-x: auto;
+    display: block;
+    white-space: nowrap;
 }
 
 .table th, .table td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
+    /* Minimum touch target size for iPad */
+    min-height: 44px;
+    vertical-align: middle;
+}
+
+/* iPad specific table adjustments */
+@media (max-width: 1024px) and (min-width: 768px) {
+    .table th, .table td {
+        padding: 12px 8px;
+        font-size: 16px;
+    }
 }
 
 .table th {
     background-color: #f0c040;
     color: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .table tr:nth-child(even) {
@@ -40,20 +73,193 @@ h1, h2, h3 {
     background-color: #ddd;
 }
 
+/* Enhanced button styles for touch */
 .button {
     background-color: #f0c040;
     border: none;
     color: white;
-    padding: 10px 20px;
+    padding: 12px 24px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
     margin: 4px 2px;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 8px;
+    /* Better touch targets */
+    min-height: 44px;
+    min-width: 44px;
+    /* Prevent selection */
+    -webkit-user-select: none;
+    user-select: none;
+    /* Smooth transitions */
+    transition: all 0.2s ease;
+    /* Remove tap highlight */
+    -webkit-tap-highlight-color: transparent;
 }
 
-.button:hover {
+.button:hover, .button:focus {
     background-color: #e0a030;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* iPad Portrait and Landscape optimizations */
+@media screen and (max-width: 1024px) {
+    body {
+        font-size: 16px; /* Prevents zoom on input focus */
+    }
+    
+    .container {
+        padding: 15px;
+    }
+    
+    /* Larger buttons for touch */
+    .button {
+        padding: 14px 28px;
+        font-size: 18px;
+        margin: 6px 4px;
+    }
+    
+    /* Better spacing for touch interfaces */
+    input, select, textarea {
+        padding: 12px;
+        font-size: 16px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        min-height: 44px;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+        border-color: #f0c040;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(240, 192, 64, 0.2);
+    }
+}
+
+/* Specific iPad optimizations */
+@media screen and (max-width: 1024px) and (min-width: 768px) {
+    /* iPad specific styles */
+    .table th, .table td {
+        padding: 14px 10px;
+        font-size: 17px;
+    }
+    
+    h1 { font-size: 28px; }
+    h2 { font-size: 24px; }
+    h3 { font-size: 20px; }
+    
+    /* Better grid layouts for iPad */
+    .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        padding: 15px;
+    }
+    
+    .menu-item {
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        border-radius: 12px;
+        padding: 15px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: transform 0.2s ease;
+    }
+    
+    .menu-item:active {
+        transform: scale(0.98);
+    }
+}
+
+/* Mobile responsiveness */
+@media screen and (max-width: 767px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .table {
+        font-size: 14px;
+    }
+    
+    .table th, .table td {
+        padding: 10px 6px;
+    }
+    
+    .button {
+        width: 100%;
+        margin: 8px 0;
+        padding: 16px;
+        font-size: 18px;
+    }
+    
+    /* Stack layouts vertically on mobile */
+    .flex-row {
+        flex-direction: column !important;
+    }
+    
+    .menu-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+}
+
+/* Fix for Safari/iPad specific issues */
+@supports (-webkit-touch-callout: none) {
+    .button {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+    }
+    
+    input, select, textarea {
+        -webkit-appearance: none;
+        border-radius: 8px;
+    }
+}
+
+/* Dark mode support for better visibility */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #1a1a1a;
+        color: #ffffff;
+    }
+    
+    .table th {
+        background-color: #d4a829;
+    }
+    
+    .table tr:nth-child(even) {
+        background-color: #2d2d2d;
+    }
+    
+    .table tr:hover {
+        background-color: #404040;
+    }
+    
+    input, select, textarea {
+        background-color: #2d2d2d;
+        color: #ffffff;
+        border-color: #555;
+    }
+}
+
+/* High DPI displays (Retina) */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .button {
+        border: 0.5px solid rgba(0,0,0,0.1);
+    }
+    
+    .table th, .table td {
+        border-width: 0.5px;
+    }
 }

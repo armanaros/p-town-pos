@@ -19,6 +19,18 @@ const CashierDashboard: React.FC<CashierDashboardProps> = ({ onLogout, cashierNa
     const [activeTab, setActiveTab] = useState<'pos' | 'queue' | 'timetracking' | 'menu' | 'inventory'>('pos');
     const [customerName, setCustomerName] = useState<string>('');
     const [tableNumber, setTableNumber] = useState<number | ''>('');
+    
+    // Simple responsive detection for iPad/tablet
+    const [isTablet, setIsTablet] = useState(window.innerWidth <= 1024);
+    
+    React.useEffect(() => {
+        const handleResize = () => {
+            setIsTablet(window.innerWidth <= 1024);
+        };
+        
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const addToCart = (itemId: number) => {
         setCart(prev => ({
@@ -112,18 +124,25 @@ const CashierDashboard: React.FC<CashierDashboardProps> = ({ onLogout, cashierNa
                 </div>
 
                 {/* Tab Navigation */}
-                <div style={{ display: 'flex', gap: '0' }}>
+                <div style={{ 
+                    display: 'flex', 
+                    gap: '0',
+                    flexWrap: isTablet ? 'wrap' : 'nowrap',
+                    justifyContent: isTablet ? 'space-around' : 'flex-start'
+                }}>
                     <button
                         onClick={() => setActiveTab('pos')}
                         style={{
-                            padding: '0.75rem 1.5rem',
+                            padding: isTablet ? '1rem 1.2rem' : '0.75rem 1.5rem',
                             backgroundColor: activeTab === 'pos' ? '#4caf50' : '#e9ecef',
                             color: activeTab === 'pos' ? 'white' : '#495057',
                             border: '1px solid #dee2e6',
                             borderRadius: '8px 0 0 8px',
                             cursor: 'pointer',
-                            fontSize: '1rem',
-                            fontWeight: activeTab === 'pos' ? 'bold' : 'normal'
+                            fontSize: isTablet ? '1.1rem' : '1rem',
+                            fontWeight: activeTab === 'pos' ? 'bold' : 'normal',
+                            minHeight: isTablet ? '50px' : '40px',
+                            flex: isTablet ? '1' : 'none'
                         }}
                     >
                         🛒 Point of Sale
@@ -234,6 +253,7 @@ const CashierDashboard: React.FC<CashierDashboardProps> = ({ onLogout, cashierNa
                         setOrderType={setOrderType}
                         setCustomerName={setCustomerName}
                         setTableNumber={setTableNumber}
+                        isTablet={isTablet}
                     />
                 ) : activeTab === 'queue' ? (
                     <OrderQueue currentUser={{ id: cashierId, username: cashierName }} />
@@ -271,6 +291,7 @@ interface POSInterfaceProps {
     setOrderType: (type: 'dine-in' | 'take-out') => void;
     setCustomerName: (name: string) => void;
     setTableNumber: (table: number | '') => void;
+    isTablet: boolean;
 }
 
 const POSInterface: React.FC<POSInterfaceProps> = ({
@@ -285,13 +306,25 @@ const POSInterface: React.FC<POSInterfaceProps> = ({
     processOrder,
     setOrderType,
     setCustomerName,
-    setTableNumber
+    setTableNumber,
+    isTablet
 }) => {
     return (
-        <div style={{ display: 'flex', height: '100%' }}>
+        <div style={{ 
+            display: 'flex', 
+            height: '100%',
+            flexDirection: isTablet ? 'column' : 'row'
+        }}>
             {/* Menu Section */}
-            <div style={{ flex: 2, padding: '1rem', borderRight: '1px solid #ddd', overflow: 'auto' }}>
-                <h3 style={{ marginTop: 0 }}>Menu Items</h3>
+            <div style={{ 
+                flex: isTablet ? 'none' : 2, 
+                padding: isTablet ? '0.8rem' : '1rem', 
+                borderRight: isTablet ? 'none' : '1px solid #ddd',
+                borderBottom: isTablet ? '1px solid #ddd' : 'none',
+                overflow: 'auto',
+                maxHeight: isTablet ? '60vh' : 'none'
+            }}>
+                <h3 style={{ marginTop: 0, fontSize: isTablet ? '1.2rem' : '1.5rem' }}>Menu Items</h3>
                 
                 {menuItems.length === 0 ? (
                     <div style={{
@@ -305,19 +338,26 @@ const POSInterface: React.FC<POSInterfaceProps> = ({
                         <p>Switch to "Menu Management" tab to add items.</p>
                     </div>
                 ) : (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
+                    <div style={{ 
+                        display: 'grid', 
+                        gridTemplateColumns: isTablet 
+                            ? 'repeat(auto-fill, minmax(160px, 1fr))' 
+                            : 'repeat(auto-fill, minmax(200px, 1fr))', 
+                        gap: isTablet ? '0.8rem' : '1rem' 
+                    }}>
                         {menuItems.map(item => (
                             <div 
                                 key={item.id}
                                 style={{
                                     border: '1px solid #ddd',
                                     borderRadius: '8px',
-                                    padding: '1rem',
+                                    padding: isTablet ? '0.8rem' : '1rem',
                                     textAlign: 'center',
                                     cursor: item.available ? 'pointer' : 'not-allowed',
                                     backgroundColor: item.available ? 'white' : '#f5f5f5',
                                     boxShadow: item.available ? '0 2px 4px rgba(0,0,0,0.1)' : '0 1px 2px rgba(0,0,0,0.05)',
                                     transition: 'transform 0.2s, box-shadow 0.2s',
+                                    minHeight: isTablet ? '110px' : '140px',
                                     opacity: item.available ? 1 : 0.6,
                                     position: 'relative'
                                 }}
@@ -382,8 +422,13 @@ const POSInterface: React.FC<POSInterfaceProps> = ({
             </div>
 
             {/* Cart Section */}
-            <div style={{ flex: 1, padding: '1rem', backgroundColor: '#f9f9f9' }}>
-                <h3>Current Order</h3>
+            <div style={{ 
+                flex: isTablet ? 'none' : 1, 
+                padding: isTablet ? '0.8rem' : '1rem', 
+                backgroundColor: '#f9f9f9',
+                minHeight: isTablet ? '40vh' : 'auto'
+            }}>
+                <h3 style={{ fontSize: isTablet ? '1.2rem' : '1.5rem' }}>Current Order</h3>
                 
                 <div style={{ marginBottom: '1rem' }}>
                     <label style={{ display: 'block', marginBottom: '0.75rem', fontWeight: 'bold', fontSize: '1rem', color: '#333' }}>Order Type:</label>
