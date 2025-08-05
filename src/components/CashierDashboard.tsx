@@ -72,15 +72,7 @@ const CashierDashboard: React.FC<CashierDashboardProps> = ({ onLogout, cashierNa
 
         addOrder(orderData);
         
-        // Show success message with order details
-        const itemsList = Object.entries(cart)
-            .map(([itemId, qty]) => {
-                const item = menuItems.find(item => item.id === parseInt(itemId));
-                return `${item?.name} x${qty}`;
-            })
-            .join(', ');
-        
-        alert(`✅ Order processed successfully!\n\nItems: ${itemsList}\nType: ${orderType}\nTotal: ₱${total.toFixed(2)}\n\n📊 This order has been synced to admin dashboard.`);
+        // Clear the form after successful order
         setCart({});
         setCustomerName('');
         setTableNumber('');
