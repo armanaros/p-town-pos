@@ -319,6 +319,7 @@ h1, h2, h3 {
     .charts-grid > div {
         overflow: hidden;
         min-width: 0;
+        max-width: 100%;
     }
     
     /* Better responsive layout for admin dashboard */
@@ -337,6 +338,14 @@ h1, h2, h3 {
     .admin-dashboard .charts-grid > div {
         padding: 1rem !important;
         overflow: hidden;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* Force chart containers to stay within bounds */
+    .admin-dashboard .charts-grid {
+        overflow: hidden;
+        width: 100%;
     }
 }
 
@@ -344,16 +353,23 @@ h1, h2, h3 {
     /* Tablet landscape mode */
     .charts-grid {
         gap: 1rem !important;
+        overflow: hidden;
     }
     
     /* Adjust chart containers for better fit */
     .charts-grid > div {
         min-width: 0; /* Allow shrinking */
         overflow: hidden;
+        max-width: 100%;
     }
     
     /* Reduce chart sizes for tablets */
     .admin-dashboard svg {
-        max-width: 90% !important;
+        max-width: 95% !important;
+    }
+    
+    /* Additional container constraints */
+    .admin-dashboard {
+        overflow-x: hidden;
     }
 }

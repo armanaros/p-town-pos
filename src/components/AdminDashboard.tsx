@@ -315,7 +315,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         }
 
         const maxValue = Math.max(...data.map(d => d.value), 1); // Ensure maxValue is at least 1
-        const width = 400;
+        const width = 350; // Reduced for better responsiveness
         const height = 200;
         const padding = 40;
         
@@ -345,7 +345,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                 <h3 style={{ color: '#1e293b', marginBottom: '1rem', fontSize: '1.2rem', fontWeight: '600' }}>
                     {title}
                 </h3>
-                <svg width={width} height={height} style={{ overflow: 'visible' }}>
+                <svg width="100%" height={height} style={{ overflow: 'visible', maxWidth: `${width}px` }} viewBox={`0 0 ${width} ${height}`}>
                     <defs>
                         <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                             <stop offset="0%" stopColor="rgba(59, 130, 246, 0.8)" />
@@ -486,9 +486,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
             );
         }
 
-        const radius = 80;
-        const centerX = 120;
-        const centerY = 100;
+        const radius = 70; // Reduced to fit better
+        const centerX = 100; // Adjusted for new viewBox
+        const centerY = 90; // Adjusted for new viewBox
         
         let currentAngle = 0;
         const slices = data.map(item => {
@@ -529,7 +529,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                     {title}
                 </h3>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-                    <svg width={240} height={200}>
+                    <svg width="100%" height="180" style={{ maxWidth: "200px" }} viewBox="0 0 200 180">
                         {slices.map((slice, index) => (
                             <path
                                 key={index}
