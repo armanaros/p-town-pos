@@ -3,18 +3,6 @@ body {
     background-color: #f8f8f8;
     margin: 0;
     padding: 0;
-    /* Better text rendering on iPad */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    /* Prevent zoom on input focus */
-    -webkit-text-size-adjust: 100%;
-    /* Better touch targets */
-    touch-action: manipulation;
-}
-
-/* Base responsive design */
-* {
-    box-sizing: border-box;
 }
 
 h1, h2, h3 {
@@ -25,44 +13,23 @@ h1, h2, h3 {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-    /* Responsive padding */
-    padding: clamp(10px, 2vw, 20px);
 }
 
-/* Table improvements for tablets */
 .table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    /* Better scrolling on tablets */
-    overflow-x: auto;
-    display: block;
-    white-space: nowrap;
 }
 
 .table th, .table td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
-    /* Minimum touch target size for iPad */
-    min-height: 44px;
-    vertical-align: middle;
-}
-
-/* iPad specific table adjustments */
-@media (max-width: 1024px) and (min-width: 768px) {
-    .table th, .table td {
-        padding: 12px 8px;
-        font-size: 16px;
-    }
 }
 
 .table th {
     background-color: #f0c040;
     color: white;
-    position: sticky;
-    top: 0;
-    z-index: 10;
 }
 
 .table tr:nth-child(even) {
@@ -73,357 +40,827 @@ h1, h2, h3 {
     background-color: #ddd;
 }
 
-/* Enhanced button styles for touch */
 .button {
     background-color: #f0c040;
     border: none;
     color: white;
-    padding: 12px 24px;
+    padding: 10px 20px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
     margin: 4px 2px;
     cursor: pointer;
-    border-radius: 8px;
-    /* Better touch targets */
-    min-height: 44px;
-    min-width: 44px;
-    /* Prevent selection */
-    -webkit-user-select: none;
-    user-select: none;
-    /* Smooth transitions */
-    transition: all 0.2s ease;
-    /* Remove tap highlight */
-    -webkit-tap-highlight-color: transparent;
+    border-radius: 5px;
 }
 
-.button:hover, .button:focus {
+.button:hover {
     background-color: #e0a030;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-.button:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-/* iPad Portrait and Landscape optimizations */
-@media screen and (max-width: 1024px) {
-    body {
-        font-size: 16px; /* Prevents zoom on input focus */
+/* Homepage Responsive Design */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    /* iPad/Large Tablet adjustments */
+    .homepage-container {
+        padding: 2rem !important;
+        max-width: 400px !important;
+        margin: 0 auto !important;
+        width: 90% !important;
     }
     
-    .container {
-        padding: 15px;
+    .homepage-title {
+        font-size: 2.2rem !important;
     }
     
-    /* Larger buttons for touch */
-    .button {
-        padding: 14px 28px;
-        font-size: 18px;
-        margin: 6px 4px;
+    .homepage-subtitle {
+        font-size: 1rem !important;
+        margin-bottom: 2.5rem !important;
     }
     
-    /* Better spacing for touch interfaces */
-    input, select, textarea {
-        padding: 12px;
-        font-size: 16px;
-        border: 2px solid #ddd;
-        border-radius: 8px;
-        min-height: 44px;
-        -webkit-appearance: none;
-        appearance: none;
+    .homepage-buttons {
+        gap: 1.5rem !important;
     }
     
-    input:focus, select:focus, textarea:focus {
-        border-color: #f0c040;
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(240, 192, 64, 0.2);
-    }
-}
-
-/* Specific iPad optimizations */
-@media screen and (max-width: 1024px) and (min-width: 768px) {
-    /* iPad specific styles */
-    .table th, .table td {
-        padding: 14px 10px;
-        font-size: 17px;
+    .homepage-button {
+        padding: 1.8rem 1rem !important;
+        font-size: 1.1rem !important;
+        width: 100% !important;
     }
     
-    h1 { font-size: 28px; }
-    h2 { font-size: 24px; }
-    h3 { font-size: 20px; }
-    
-    /* Better grid layouts for iPad */
-    .menu-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 15px;
-        padding: 15px;
+    .homepage-main {
+        min-height: 85vh !important;
+        padding: 2rem 1rem !important;
+        padding-bottom: 100px !important;
     }
     
-    .menu-item {
-        min-height: 120px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        border-radius: 12px;
-        padding: 15px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        transition: transform 0.2s ease;
-    }
-    
-    .menu-item:active {
-        transform: scale(0.98);
+    .homepage-footer {
+        bottom: 20px !important;
+        font-size: 0.9rem !important;
+        position: fixed !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
     }
 }
 
-/* Mobile responsiveness */
-@media screen and (max-width: 767px) {
-    .container {
-        padding: 10px;
+@media screen and (min-width: 481px) and (max-width: 768px) {
+    /* Small Tablet adjustments */
+    .homepage-container {
+        padding: 1.8rem !important;
+        max-width: 350px !important;
+        margin: 0 auto !important;
+        width: 85% !important;
     }
     
-    .table {
-        font-size: 14px;
+    .homepage-title {
+        font-size: 2rem !important;
     }
     
-    .table th, .table td {
-        padding: 10px 6px;
+    .homepage-subtitle {
+        font-size: 0.95rem !important;
+        margin-bottom: 2rem !important;
     }
     
-    .button {
-        width: 100%;
-        margin: 8px 0;
-        padding: 16px;
-        font-size: 18px;
+    .homepage-buttons {
+        gap: 1.2rem !important;
     }
     
-    /* Stack layouts vertically on mobile */
-    .flex-row {
+    .homepage-button {
+        padding: 1.6rem 0.8rem !important;
+        font-size: 1rem !important;
+        width: 100% !important;
+    }
+    
+    .homepage-main {
+        min-height: 85vh !important;
+        padding: 1.5rem 1rem !important;
+        padding-bottom: 80px !important;
+    }
+    
+    .homepage-footer {
+        bottom: 15px !important;
+        font-size: 0.85rem !important;
+        position: fixed !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    /* Phone adjustments - smaller and more spacing */
+    .homepage-main {
+        min-height: 85vh !important; /* Reduce height to avoid footer overlap */
+        padding-bottom: 60px !important;
+    }
+    
+    .homepage-container {
+        padding: 1.5rem !important;
+        max-width: 320px !important;
+        margin: 0 auto !important;
+    }
+    
+    .homepage-title {
+        font-size: 1.8rem !important;
+        margin-bottom: 0.8rem !important;
+    }
+    
+    .homepage-subtitle {
+        font-size: 0.9rem !important;
+        margin-bottom: 2rem !important;
+    }
+    
+    .homepage-buttons {
+        gap: 1rem !important;
         flex-direction: column !important;
     }
     
-    .menu-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
+    .homepage-button {
+        padding: 1.5rem 0.8rem !important;
+        font-size: 1rem !important;
+    }
+    
+    .homepage-button-description {
+        font-size: 0.8rem !important;
+        margin-top: 0.3rem !important;
+    }
+    
+    .homepage-footer {
+        bottom: 10px !important;
+        font-size: 0.8rem !important;
     }
 }
 
-/* Fix for Safari/iPad specific issues */
-@supports (-webkit-touch-callout: none) {
-    .button {
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-    }
-    
-    input, select, textarea {
-        -webkit-appearance: none;
-        border-radius: 8px;
-    }
-}
-
-/* Dark mode support for better visibility */
-@media (prefers-color-scheme: dark) {
-    body {
-        background-color: #1a1a1a;
-        color: #ffffff;
-    }
-    
-    .table th {
-        background-color: #d4a829;
-    }
-    
-    .table tr:nth-child(even) {
-        background-color: #2d2d2d;
-    }
-    
-    .table tr:hover {
-        background-color: #404040;
-    }
-    
-    input, select, textarea {
-        background-color: #2d2d2d;
-        color: #ffffff;
-        border-color: #555;
-    }
-}
-
-/* High DPI displays (Retina) */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-    .button {
-        border: 0.5px solid rgba(0,0,0,0.1);
-    }
-    
-    .table th, .table td {
-        border-width: 0.5px;
-    }
-}
-
-/* Login page responsive fixes */
-@media (max-height: 700px) {
-    /* Adjust login container for shorter screens */
+/* Login Pages Responsive Design */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    /* iPad/Large Tablet adjustments for login pages */
     .login-container {
         padding: 2rem !important;
-        margin: 1rem !important;
+        max-width: 320px !important;
+        margin: 0 auto !important;
+        width: 80% !important;
     }
     
-    .login-container h2 {
-        font-size: 1.4rem !important;
+    .login-main {
+        min-height: 80vh !important;
+        padding: 1.5rem 0.5rem !important;
+        padding-bottom: 60px !important;
+    }
+    
+    .login-footer {
+        bottom: 60px !important;
+        font-size: 0.9rem !important;
+        position: fixed !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+    }
+    
+    .login-back-button {
+        padding: 0.8rem 1.4rem !important;
+        font-size: 1rem !important;
+        margin-top: 2rem !important;
+        margin-bottom: 3rem !important;
+    }
+    
+    .login-form-input {
+        padding: 1rem !important;
+        font-size: 1rem !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    .login-form-button {
+        padding: 1rem !important;
+        font-size: 1.1rem !important;
+        width: 100% !important;
+    }
+}
+
+@media screen and (min-width: 481px) and (max-width: 768px) {
+    /* Small Tablet/Large Phone adjustments for login pages */
+    .login-container {
+        padding: 2rem !important;
+        max-width: 350px !important;
+        margin: 0 auto !important;
+        width: 85% !important;
+    }
+    
+    .login-main {
+        min-height: 85vh !important;
+        padding: 1.5rem 1rem !important;
+        padding-bottom: 100px !important;
+    }
+    
+    .login-footer {
+        bottom: 35px !important;
+        font-size: 0.85rem !important;
+        position: fixed !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+    }
+    
+    .login-back-button {
+        padding: 0.7rem 1.2rem !important;
+        font-size: 0.9rem !important;
+        margin-top: 1.5rem !important;
+        margin-bottom: 2rem !important;
+    }
+    
+    .login-form-input {
+        padding: 0.9rem !important;
+        font-size: 0.95rem !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    .login-form-button {
+        padding: 0.9rem !important;
+        font-size: 1rem !important;
+        width: 100% !important;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    /* Phone adjustments for login pages - prevent background extension */
+    .login-container {
+        padding: 1.5rem !important;
+        max-width: 300px !important;
+        margin: 0 auto !important;
+        width: 85% !important;
+    }
+    
+    .login-main {
+        min-height: 80vh !important;
+        padding: 1rem 0.5rem !important;
+        padding-bottom: 70px !important;
+        box-sizing: border-box !important;
+    }
+    
+    .login-footer {
+        bottom: 30px !important;
+        font-size: 0.8rem !important;
+        position: fixed !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 100% !important;
+        text-align: center !important;
+    }
+    
+    .login-back-button {
+        padding: 0.6rem 1rem !important;
+        font-size: 0.85rem !important;
+        margin-top: 1rem !important;
+        margin-bottom: 1.5rem !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    .login-form-input {
+        padding: 0.8rem !important;
+        font-size: 0.9rem !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
         margin-bottom: 0.5rem !important;
     }
     
-    .login-container .logo {
-        width: 180px !important;
-        height: 150px !important;
+    .login-form-button {
+        padding: 0.8rem !important;
+        font-size: 0.95rem !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    .login-logo {
+        width: 120px !important;
+        height: auto !important;
         margin-bottom: 1rem !important;
     }
 }
 
-@media (max-width: 768px) and (max-height: 800px) {
-    /* Tablet portrait mode adjustments */
-    .login-container {
-        max-width: 90% !important;
-        padding: 2rem !important;
+/* Dashboard Responsive Design */
+/* Desktop - Default styles */
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.dashboard-header {
+    padding: 1rem;
+    border-bottom: 1px solid #ddd;
+    background-color: #f8f9fa;
+}
+
+.dashboard-content {
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Tablet Landscape (1024px and below) */
+@media screen and (max-width: 1024px) {
+    .dashboard-header {
+        padding: 0.75rem;
     }
     
-    .login-container input {
-        padding: 0.8rem !important;
+    .dashboard-header h2 {
+        font-size: 1.5rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .dashboard-tabs {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 0.25rem !important;
+    }
+    
+    .dashboard-tab {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.9rem !important;
+        flex: 1 !important;
+        min-width: 120px !important;
+        text-align: center !important;
+    }
+    
+    .pos-interface {
+        flex-direction: column !important;
+    }
+    
+    .menu-section {
+        flex: none !important;
+        height: 50vh !important;
+        border-right: none !important;
+        border-bottom: 1px solid #ddd !important;
+    }
+    
+    .cart-section {
+        flex: none !important;
+        height: 50vh !important;
+    }
+    
+    .menu-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+        gap: 0.75rem !important;
+    }
+    
+    .menu-item {
+        padding: 0.75rem !important;
+    }
+    
+    .menu-item h3 {
         font-size: 1rem !important;
     }
     
-    .login-container button {
-        padding: 0.8rem !important;
+    .menu-item p {
         font-size: 1rem !important;
     }
 }
 
-/* Admin Dashboard responsive fixes */
-@media (max-width: 768px) {
-    /* Stack charts vertically on tablets and mobile */
-    .charts-grid {
-        grid-template-columns: 1fr !important;
+/* Tablet Portrait (768px and below) */
+@media screen and (max-width: 768px) {
+    .dashboard-header {
+        padding: 0.5rem;
     }
     
-    /* Make summary cards stack on smaller screens */
-    .summary-cards {
-        grid-template-columns: 1fr !important;
-        gap: 1rem !important;
+    .dashboard-header h2 {
+        font-size: 1.3rem !important;
+        margin-bottom: 0.25rem !important;
     }
     
-    /* Ensure charts don't overflow */
-    .charts-grid > div {
-        overflow: hidden;
-        min-width: 0;
-        max-width: 100%;
+    .dashboard-info {
+        font-size: 0.8rem !important;
     }
     
-    /* Better responsive layout for admin dashboard */
-    .admin-dashboard-container {
-        padding: 1rem !important;
+    .dashboard-tabs {
+        flex-direction: column !important;
+        gap: 0.25rem !important;
     }
     
-    /* Fix analytics charts overflow */
-    .admin-dashboard svg {
-        max-width: 100% !important;
+    .dashboard-tab {
+        padding: 0.75rem !important;
+        font-size: 0.85rem !important;
         width: 100% !important;
-        height: auto !important;
+        border-radius: 4px !important;
+        margin-bottom: 0.25rem !important;
     }
     
-    /* Ensure chart containers are properly contained */
-    .admin-dashboard .charts-grid > div {
-        padding: 1rem !important;
-        overflow: hidden;
-        max-width: 100%;
-        box-sizing: border-box;
+    .logout-button {
+        padding: 0.4rem 0.8rem !important;
+        font-size: 0.8rem !important;
     }
     
-    /* Force chart containers to stay within bounds */
-    .admin-dashboard .charts-grid {
-        overflow: hidden;
-        width: 100%;
+    .menu-section {
+        height: 45vh !important;
+        padding: 0.75rem !important;
+    }
+    
+    .cart-section {
+        height: 55vh !important;
+        padding: 0.75rem !important;
+    }
+    
+    .menu-grid {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important;
+        gap: 0.5rem !important;
+    }
+    
+    .menu-item {
+        padding: 0.5rem !important;
+    }
+    
+    .menu-item h3 {
+        font-size: 0.9rem !important;
+        margin-bottom: 0.25rem !important;
+    }
+    
+    .menu-item p {
+        font-size: 0.9rem !important;
+    }
+    
+    .order-type-buttons {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+    
+    .order-type-button {
+        padding: 0.75rem !important;
+        font-size: 0.9rem !important;
+    }
+    
+    .cart-item {
+        padding: 0.4rem !important;
+        font-size: 0.85rem !important;
+    }
+    
+    .cart-controls button {
+        padding: 0.2rem 0.4rem !important;
+        font-size: 0.8rem !important;
+    }
+    
+    .process-order-button {
+        padding: 0.75rem !important;
+        font-size: 1rem !important;
     }
 }
 
-/* iPad 10 specific fixes (1080x810 in landscape, 810x1080 in portrait) */
-@media (max-width: 1080px) and (min-width: 769px) {
-    /* iPad specific chart fixes */
-    .admin-dashboard .charts-grid {
-        grid-template-columns: 1fr !important;
-        gap: 1rem !important;
+/* Mobile (480px and below) */
+@media screen and (max-width: 480px) {
+    .dashboard-container {
+        height: 100vh;
         overflow: hidden;
-        width: 100%;
     }
     
-    .admin-dashboard .charts-grid > div {
-        overflow: hidden !important;
-        max-width: 100% !important;
-        padding: 1rem !important;
+    .dashboard-header {
+        padding: 0.5rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+    
+    .dashboard-header h2 {
+        font-size: 1.1rem !important;
         margin: 0 !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
     }
     
-    .admin-dashboard svg {
-        max-width: 100% !important;
-        width: 100% !important;
-        height: auto !important;
-        display: block !important;
-        margin: 0 auto !important;
+    .dashboard-info {
+        font-size: 0.7rem !important;
+        margin: 0.25rem 0 !important;
     }
     
-    /* Force containers to respect boundaries */
-    .admin-dashboard-container {
-        overflow-x: hidden !important;
-        padding: 1rem !important;
-        width: 100% !important;
-        max-width: 100vw !important;
-        box-sizing: border-box !important;
+    .dashboard-tabs {
+        display: flex !important;
+        overflow-x: auto !important;
+        gap: 0.25rem !important;
+        padding: 0.25rem 0 !important;
+        -webkit-overflow-scrolling: touch !important;
     }
     
-    /* Summary cards responsive for iPad */
-    .summary-cards {
-        grid-template-columns: 1fr !important;
-        gap: 1rem !important;
+    .dashboard-tab {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.75rem !important;
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+        min-width: 100px !important;
+        border-radius: 4px !important;
     }
     
-    /* Aggressive chart containment for iPad */
-    .admin-dashboard .charts-grid > div > div {
-        max-width: 100% !important;
-        overflow: hidden !important;
+    .logout-button {
+        padding: 0.3rem 0.6rem !important;
+        font-size: 0.7rem !important;
+    }
+    
+    .pos-interface {
+        flex-direction: column !important;
+        height: calc(100vh - 120px) !important;
+    }
+    
+    .menu-section {
+        height: 40vh !important;
+        padding: 0.5rem !important;
+        overflow-y: auto !important;
+        border-bottom: 2px solid #ddd !important;
+    }
+    
+    .cart-section {
+        height: 60vh !important;
+        padding: 0.5rem !important;
+        overflow-y: auto !important;
+    }
+    
+    .menu-section h3 {
+        font-size: 1rem !important;
+        margin: 0 0 0.5rem 0 !important;
+    }
+    
+    .cart-section h3 {
+        font-size: 1rem !important;
+        margin: 0 0 0.5rem 0 !important;
+    }
+    
+    .menu-grid {
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)) !important;
+        gap: 0.4rem !important;
+    }
+    
+    .menu-item {
+        padding: 0.4rem !important;
+        border-radius: 6px !important;
+    }
+    
+    .menu-item h3 {
+        font-size: 0.8rem !important;
+        margin-bottom: 0.2rem !important;
+        line-height: 1.2 !important;
+    }
+    
+    .menu-item p {
+        font-size: 0.8rem !important;
+        margin: 0 !important;
+    }
+    
+    .order-type-section {
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .order-type-section label {
+        font-size: 0.85rem !important;
+        margin-bottom: 0.4rem !important;
+    }
+    
+    .order-type-buttons {
+        flex-direction: row !important;
+        gap: 0 !important;
+    }
+    
+    .order-type-button {
+        padding: 0.6rem 0.4rem !important;
+        font-size: 0.75rem !important;
+        line-height: 1.2 !important;
+    }
+    
+    .customer-details {
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .customer-details label {
+        font-size: 0.8rem !important;
+        margin-bottom: 0.2rem !important;
+    }
+    
+    .customer-details input {
+        padding: 0.4rem !important;
+        font-size: 0.8rem !important;
+        border-radius: 4px !important;
+    }
+    
+    .cart-items {
+        max-height: 200px !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .cart-item {
+        padding: 0.3rem !important;
+        font-size: 0.8rem !important;
+        border-bottom: 1px solid #eee !important;
+    }
+    
+    .cart-item-name {
+        font-size: 0.8rem !important;
+        font-weight: bold !important;
+    }
+    
+    .cart-item-price {
+        font-size: 0.75rem !important;
+        color: #666 !important;
+    }
+    
+    .cart-controls {
+        gap: 0.3rem !important;
+    }
+    
+    .cart-controls button {
+        padding: 0.2rem 0.4rem !important;
+        font-size: 0.7rem !important;
+        min-width: 24px !important;
+        border-radius: 3px !important;
+    }
+    
+    .cart-controls span {
+        font-size: 0.8rem !important;
+        min-width: 20px !important;
+        text-align: center !important;
+    }
+    
+    .cart-total {
+        font-size: 1rem !important;
+        margin-bottom: 0.75rem !important;
+        padding: 0.5rem !important;
+        background-color: #f0f0f0 !important;
+        border-radius: 4px !important;
+        text-align: center !important;
+    }
+    
+    .process-order-button {
+        padding: 0.75rem !important;
+        font-size: 0.9rem !important;
+        border-radius: 6px !important;
     }
 }
 
-@media (max-width: 1024px) {
-    /* Tablet landscape mode */
-    .charts-grid {
-        gap: 1rem !important;
-        overflow: hidden;
-    }
-    
-    /* Adjust chart containers for better fit */
-    .charts-grid > div {
-        min-width: 0; /* Allow shrinking */
-        overflow: hidden;
-        max-width: 100%;
-    }
-    
-    /* Reduce chart sizes for tablets */
-    .admin-dashboard svg {
-        max-width: 95% !important;
-    }
-    
-    /* Additional container constraints */
+/* Admin Dashboard Responsive */
+@media screen and (max-width: 1024px) {
     .admin-dashboard {
-        overflow-x: hidden;
+        padding: 0.75rem !important;
     }
     
-    /* Force single column layout for better iPad experience */
-    .admin-dashboard .charts-grid {
+    .admin-tabs {
+        flex-wrap: wrap !important;
+        gap: 0.25rem !important;
+    }
+    
+    .admin-tab {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.9rem !important;
+        flex: 1 !important;
+        min-width: 140px !important;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+        gap: 1rem !important;
+    }
+    
+    .stat-card {
+        padding: 1rem !important;
+    }
+    
+    .stat-card h3 {
+        font-size: 1rem !important;
+    }
+    
+    .stat-card .stat-value {
+        font-size: 1.5rem !important;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .admin-dashboard {
+        padding: 0.5rem !important;
+    }
+    
+    .admin-tabs {
+        flex-direction: column !important;
+        gap: 0.25rem !important;
+    }
+    
+    .admin-tab {
+        padding: 0.75rem !important;
+        font-size: 0.85rem !important;
+        width: 100% !important;
+        text-align: center !important;
+    }
+    
+    .stats-grid {
         grid-template-columns: 1fr !important;
+        gap: 0.75rem !important;
+    }
+    
+    .stat-card {
+        padding: 0.75rem !important;
+        text-align: center !important;
+    }
+    
+    .stat-card h3 {
+        font-size: 0.9rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .stat-card .stat-value {
+        font-size: 1.3rem !important;
+    }
+    
+    .table-container {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    .table {
+        min-width: 600px !important;
+        font-size: 0.8rem !important;
+    }
+    
+    .table th, .table td {
+        padding: 0.5rem !important;
+        white-space: nowrap !important;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .admin-dashboard {
+        padding: 0.4rem !important;
+    }
+    
+    .admin-header h2 {
+        font-size: 1.1rem !important;
+    }
+    
+    .admin-tabs {
+        display: flex !important;
+        overflow-x: auto !important;
+        gap: 0.25rem !important;
+        padding: 0.25rem 0 !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    .admin-tab {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.75rem !important;
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+        min-width: 100px !important;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 0.5rem !important;
+    }
+    
+    .stat-card {
+        padding: 0.5rem !important;
+    }
+    
+    .stat-card h3 {
+        font-size: 0.8rem !important;
+        margin-bottom: 0.3rem !important;
+    }
+    
+    .stat-card .stat-value {
+        font-size: 1.1rem !important;
+    }
+    
+    .table {
+        font-size: 0.7rem !important;
+        min-width: 500px !important;
+    }
+    
+    .table th, .table td {
+        padding: 0.3rem !important;
+    }
+    
+    .button {
+        padding: 0.4rem 0.8rem !important;
+        font-size: 0.8rem !important;
+    }
+}
+
+/* Utility Classes for Responsive Design */
+.mobile-hidden {
+    display: block;
+}
+
+.mobile-only {
+    display: none;
+}
+
+@media screen and (max-width: 768px) {
+    .mobile-hidden {
+        display: none !important;
+    }
+    
+    .mobile-only {
+        display: block !important;
+    }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+    .button, .dashboard-tab, .menu-item, .cart-controls button {
+        min-height: 44px !important;
+        min-width: 44px !important;
+    }
+    
+    .menu-item {
+        padding: 0.75rem !important;
+    }
+    
+    .dashboard-tab {
+        padding: 0.75rem 1rem !important;
     }
 }

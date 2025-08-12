@@ -1,0 +1,97 @@
+{
+  "menuItems": {
+    "item1": {
+      "id": 1,
+      "name": "Classic Burger",
+      "price": 250,
+      "category": "Main Dishes",
+      "available": true,
+      "description": "Juicy beef patty with lettuce, tomato, and special sauce"
+    },
+    "item2": {
+      "id": 2,
+      "name": "Chicken Sandwich",
+      "price": 220,
+      "category": "Main Dishes",
+      "available": true,
+      "description": "Grilled chicken breast with mayo and pickles"
+    },
+    "item3": {
+      "id": 3,
+      "name": "Fish & Chips",
+      "price": 280,
+      "category": "Main Dishes",
+      "available": true,
+      "description": "Fresh cod with crispy fries"
+    },
+    "item4": {
+      "id": 4,
+      "name": "Caesar Salad",
+      "price": 180,
+      "category": "Salads",
+      "available": true,
+      "description": "Crisp romaine with parmesan and croutons"
+    },
+    "item5": {
+      "id": 5,
+      "name": "French Fries",
+      "price": 80,
+      "category": "Sides",
+      "available": true,
+      "description": "Golden crispy fries"
+    },
+    "item6": {
+      "id": 6,
+      "name": "Onion Rings",
+      "price": 90,
+      "category": "Sides",
+      "available": true,
+      "description": "Beer-battered onion rings"
+    },
+    "item7": {
+      "id": 7,
+      "name": "Coca Cola",
+      "price": 50,
+      "category": "Beverages",
+      "available": true,
+      "description": "Refreshing cola drink"
+    },
+    "item8": {
+      "id": 8,
+      "name": "Orange Juice",
+      "price": 60,
+      "category": "Beverages",
+      "available": true,
+      "description": "Fresh squeezed orange juice"
+    },
+    "item9": {
+      "id": 9,
+      "name": "Chocolate Cake",
+      "price": 120,
+      "category": "Desserts",
+      "available": true,
+      "description": "Rich chocolate layer cake"
+    },
+    "item10": {
+      "id": 10,
+      "name": "Ice Cream",
+      "price": 80,
+      "category": "Desserts",
+      "available": true,
+      "description": "Vanilla ice cream scoop"
+    }
+  },
+  "users": {
+    "admin": {
+      "username": "admin",
+      "password": "admin123",
+      "role": "admin",
+      "name": "Administrator"
+    }
+  },
+  "settings": {
+    "orderCounter": {
+      "value": 1
+    }
+  }
+}

@@ -6,14 +6,14 @@ interface HomePageProps {
 
 const HomePage: React.FC<HomePageProps> = ({ onSelectRole }) => {
     return (
-        <div style={{
+        <div className="homepage-main" style={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
             minHeight: '100vh',
             backgroundColor: '#f0f8ff'
         }}>
-            <div style={{
+            <div className="homepage-container" style={{
                 backgroundColor: 'white',
                 padding: '3rem',
                 borderRadius: '12px',
@@ -22,7 +22,7 @@ const HomePage: React.FC<HomePageProps> = ({ onSelectRole }) => {
                 maxWidth: '500px',
                 width: '100%'
             }}>
-                <h1 style={{ 
+                <h1 className="homepage-title" style={{ 
                     color: '#333', 
                     marginBottom: '1rem',
                     fontSize: '2.5rem',
@@ -31,7 +31,7 @@ const HomePage: React.FC<HomePageProps> = ({ onSelectRole }) => {
                     🏪 P-Town POS
                 </h1>
                 
-                <p style={{ 
+                <p className="homepage-subtitle" style={{ 
                     color: '#666', 
                     marginBottom: '3rem',
                     fontSize: '1.1rem'
@@ -39,12 +39,13 @@ const HomePage: React.FC<HomePageProps> = ({ onSelectRole }) => {
                     Welcome to P-Town Point of Sale System
                 </p>
                 
-                <div style={{ 
+                <div className="homepage-buttons" style={{ 
                     display: 'flex', 
                     gap: '2rem',
                     flexDirection: window.innerWidth < 600 ? 'column' : 'row'
                 }}>
                     <button
+                        className="homepage-button"
                         onClick={() => onSelectRole('admin')}
                         style={{
                             flex: 1,
@@ -64,12 +65,13 @@ const HomePage: React.FC<HomePageProps> = ({ onSelectRole }) => {
                     >
                         👨‍💼<br />
                         Admin Login
-                        <div style={{ fontSize: '0.9rem', fontWeight: 'normal', marginTop: '0.5rem' }}>
+                        <div className="homepage-button-description" style={{ fontSize: '0.9rem', fontWeight: 'normal', marginTop: '0.5rem' }}>
                             View reports & manage system
                         </div>
                     </button>
                     
                     <button
+                        className="homepage-button"
                         onClick={() => onSelectRole('cashier')}
                         style={{
                             flex: 1,
@@ -88,8 +90,8 @@ const HomePage: React.FC<HomePageProps> = ({ onSelectRole }) => {
                         onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#4caf50'}
                     >
                         💰<br />
-                        Cashier Login
-                        <div style={{ fontSize: '0.9rem', fontWeight: 'normal', marginTop: '0.5rem' }}>
+                        Employee Login
+                        <div className="homepage-button-description" style={{ fontSize: '0.9rem', fontWeight: 'normal', marginTop: '0.5rem' }}>
                             Process orders & sales
                         </div>
                     </button>
@@ -97,7 +99,7 @@ const HomePage: React.FC<HomePageProps> = ({ onSelectRole }) => {
             </div>
             
             {/* Footer */}
-            <div style={{
+            <div className="homepage-footer" style={{
                 position: 'absolute',
                 bottom: '20px',
                 left: '50%',

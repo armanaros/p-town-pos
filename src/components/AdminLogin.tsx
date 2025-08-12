@@ -47,7 +47,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onBackToHome }) => {
     };
 
     return (
-        <div style={{
+        <div className="login-main" style={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
@@ -55,155 +55,132 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onBackToHome }) => {
             background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%)',
             fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif'
         }}>
-            <div style={{
+            <div className="login-container" style={{
                 backgroundColor: 'rgba(255, 255, 255, 0.15)',
                 backdropFilter: 'blur(20px)',
-                padding: '3rem',
-                borderRadius: '20px',
-                boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
-                width: '100%',
-                maxWidth: '500px',
+                padding: '2rem',
+                maxWidth: '340px',
+                margin: '0 auto',
+                width: '85%',
+                borderRadius: '16px',
+                boxShadow: '0 12px 32px rgba(30, 60, 114, 0.12)',
                 position: 'relative',
-                overflow: 'hidden',
-                border: '1px solid rgba(255, 255, 255, 0.3)'
-            }} className="login-container">
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                marginBottom: '100px' // more space for footer
+            }}>
                 {/* Decorative Elements */}
                 <div style={{
                     position: 'absolute',
-                    top: '-50px',
-                    right: '-50px',
-                    width: '100px',
-                    height: '100px',
+                    top: '-30px',
+                    right: '-30px',
+                    width: '60px',
+                    height: '60px',
                     background: 'linear-gradient(45deg, #667eea, #764ba2)',
                     borderRadius: '50%',
-                    opacity: 0.1
+                    opacity: 0.08
                 }}></div>
                 <div style={{
                     position: 'absolute',
-                    bottom: '-30px',
-                    left: '-30px',
-                    width: '60px',
-                    height: '60px',
+                    bottom: '-20px',
+                    left: '-20px',
+                    width: '40px',
+                    height: '40px',
                     background: 'linear-gradient(45deg, #764ba2, #667eea)',
                     borderRadius: '50%',
-                    opacity: 0.1
+                    opacity: 0.08
                 }}></div>
 
                 {/* Logo Section */}
-                <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                <div style={{ textAlign: 'center', marginBottom: '1.2rem' }}>
                     <Logo 
-                        size={200}
+                        size={120}
+                        className="login-logo"
                         style={{ 
-                            margin: '0 auto 1.5rem',
-                            boxShadow: '0 15px 40px rgba(30, 60, 114, 0.3)',
-                            borderRadius: '20px',
-                            width: '240px',
-                            height: '200px'
+                            margin: '0 auto 1rem',
+                            boxShadow: '0 8px 24px rgba(30, 60, 114, 0.2)',
+                            borderRadius: '16px',
+                            width: '120px',
+                            height: '100px'
                         }}
-                        className="logo"
                     />
                     <h2 style={{ 
                         margin: 0, 
                         color: 'white',
-                        fontSize: '1.6rem',
+                        fontSize: '1.2rem',
                         fontWeight: '600',
-                        textShadow: '0 2px 10px rgba(0, 0, 0, 0.3)'
+                        textShadow: '0 1px 6px rgba(0, 0, 0, 0.2)'
                     }}>
                         P-Town POS
                     </h2>
                     <p style={{ 
-                        margin: '0.5rem 0 0 0', 
-                        color: 'rgba(255, 255, 255, 0.9)',
-                        fontSize: '1rem',
-                        textShadow: '0 1px 5px rgba(0, 0, 0, 0.2)'
+                        margin: '0.3rem 0 0 0', 
+                        color: 'rgba(255, 255, 255, 0.85)',
+                        fontSize: '0.95rem',
+                        textShadow: '0 1px 3px rgba(0, 0, 0, 0.15)'
                     }}>
                         Admin Dashboard
                     </p>
                 </div>
                 
                 <form onSubmit={handleSubmit}>
-                    <div style={{ marginBottom: '1.5rem' }}>
+                    <div style={{ marginBottom: '1rem' }}>
                         <label style={{ 
                             display: 'block', 
-                            marginBottom: '0.5rem', 
+                            marginBottom: '0.3rem', 
                             color: 'white',
                             fontWeight: '500',
-                            fontSize: '0.95rem',
-                            textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)'
+                            fontSize: '0.9rem',
+                            textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)'
                         }}>
                             Username
                         </label>
                         <input
+                            className="login-form-input"
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             required
                             placeholder="Enter your username"
                             style={{
-                                width: '100%',
-                                padding: '1rem',
+                                width: '92%',
+                                padding: '0.7rem 1.2rem',
                                 border: '2px solid #e8e8e8',
-                                borderRadius: '12px',
-                                fontSize: '1rem',
-                                transition: 'all 0.3s ease',
-                                outline: 'none',
-                                fontFamily: 'inherit',
-                                background: '#fafafa'
-                            }}
-                            onFocus={(e) => {
-                                const target = e.target as HTMLInputElement;
-                                target.style.borderColor = '#2a5298';
-                                target.style.background = '#fff';
-                                target.style.boxShadow = '0 0 0 3px rgba(42, 82, 152, 0.15)';
-                            }}
-                            onBlur={(e) => {
-                                const target = e.target as HTMLInputElement;
-                                target.style.borderColor = '#e8e8e8';
-                                target.style.background = '#fafafa';
-                                target.style.boxShadow = 'none';
+                                borderRadius: '10px',
+                                fontSize: '0.95rem',
+                                background: '#fafafa',
+                                margin: '0 auto',
+                                display: 'block'
                             }}
                         />
                     </div>
                     
-                    <div style={{ marginBottom: '2rem' }}>
+                    <div style={{ marginBottom: '1.2rem' }}>
                         <label style={{ 
                             display: 'block', 
-                            marginBottom: '0.5rem', 
+                            marginBottom: '0.3rem', 
                             color: 'white',
                             fontWeight: '500',
-                            fontSize: '0.95rem',
-                            textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)'
+                            fontSize: '0.9rem',
+                            textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)'
                         }}>
                             Password
                         </label>
                         <input
+                            className="login-form-input"
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
                             placeholder="Enter your password"
                             style={{
-                                width: '100%',
-                                padding: '1rem',
+                                width: '92%',
+                                padding: '0.7rem 1.2rem',
                                 border: '2px solid #e8e8e8',
-                                borderRadius: '12px',
-                                fontSize: '1rem',
-                                transition: 'all 0.3s ease',
-                                outline: 'none',
-                                fontFamily: 'inherit',
-                                background: '#fafafa'
-                            }}
-                            onFocus={(e) => {
-                                const target = e.target as HTMLInputElement;
-                                target.style.borderColor = '#2a5298';
-                                target.style.background = '#fff';
-                                target.style.boxShadow = '0 0 0 3px rgba(42, 82, 152, 0.15)';
-                            }}
-                            onBlur={(e) => {
-                                const target = e.target as HTMLInputElement;
-                                target.style.borderColor = '#e8e8e8';
-                                target.style.background = '#fafafa';
-                                target.style.boxShadow = 'none';
+                                borderRadius: '10px',
+                                fontSize: '0.95rem',
+                                background: '#fafafa',
+                                margin: '0 auto',
+                                display: 'block'
                             }}
                         />
                     </div>
@@ -211,12 +188,12 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onBackToHome }) => {
                     {error && (
                         <div style={{
                             color: '#e53e3e',
-                            marginBottom: '1.5rem',
+                            marginBottom: '1rem',
                             textAlign: 'center',
-                            fontSize: '0.9rem',
-                            padding: '0.75rem',
+                            fontSize: '0.85rem',
+                            padding: '0.5rem',
                             backgroundColor: '#fed7d7',
-                            borderRadius: '8px',
+                            borderRadius: '7px',
                             border: '1px solid #feb2b2'
                         }}>
                             {error}
@@ -224,42 +201,27 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onBackToHome }) => {
                     )}
                     
                     <button
+                        className="login-form-button"
                         type="submit"
                         disabled={loading}
                         style={{
                             width: '100%',
-                            padding: '1rem',
+                            padding: '0.7rem',
                             background: loading ? '#a0a0a0' : 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
                             color: 'white',
                             border: 'none',
-                            borderRadius: '12px',
-                            fontSize: '1.1rem',
+                            borderRadius: '10px',
+                            fontSize: '1rem',
                             fontWeight: '600',
                             cursor: loading ? 'not-allowed' : 'pointer',
-                            transition: 'all 0.3s ease',
-                            boxShadow: loading ? 'none' : '0 4px 15px rgba(30, 60, 114, 0.4)',
-                            transform: loading ? 'none' : 'translateY(0)',
-                        }}
-                        onMouseEnter={(e) => {
-                            if (!loading) {
-                                const target = e.target as HTMLButtonElement;
-                                target.style.transform = 'translateY(-2px)';
-                                target.style.boxShadow = '0 6px 20px rgba(30, 60, 114, 0.5)';
-                            }
-                        }}
-                        onMouseLeave={(e) => {
-                            if (!loading) {
-                                const target = e.target as HTMLButtonElement;
-                                target.style.transform = 'translateY(0)';
-                                target.style.boxShadow = '0 4px 15px rgba(30, 60, 114, 0.4)';
-                            }
+                            boxShadow: loading ? 'none' : '0 2px 8px rgba(30, 60, 114, 0.2)',
                         }}
                     >
                         {loading ? (
                             <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
                                 <span style={{ 
-                                    width: '16px', 
-                                    height: '16px', 
+                                    width: '14px', 
+                                    height: '14px', 
                                     border: '2px solid transparent',
                                     borderTop: '2px solid white',
                                     borderRadius: '50%',
@@ -272,46 +234,41 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onBackToHome }) => {
                 </form>
                 
                 <button
+                    className="login-back-button"
                     onClick={onBackToHome}
                     style={{
                         width: '100%',
-                        padding: '0.75rem',
+                        padding: '0.6rem',
                         backgroundColor: 'transparent',
                         color: 'white',
-                        border: '2px solid rgba(255, 255, 255, 0.3)',
-                        borderRadius: '12px',
-                        fontSize: '0.95rem',
+                        border: '2px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '10px',
+                        fontSize: '0.9rem',
                         cursor: 'pointer',
-                        transition: 'all 0.3s ease',
                         fontWeight: '500',
-                        marginTop: '1rem'
-                    }}
-                    onMouseEnter={(e) => {
-                        const target = e.target as HTMLButtonElement;
-                        target.style.borderColor = 'rgba(255, 255, 255, 0.6)';
-                        target.style.background = 'rgba(255, 255, 255, 0.1)';
-                    }}
-                    onMouseLeave={(e) => {
-                        const target = e.target as HTMLButtonElement;
-                        target.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-                        target.style.background = 'transparent';
+                        marginTop: '0.7rem'
                     }}
                 >
                     ← Back to Home
                 </button>
-                
-                {/* Footer - moved inside container */}
-                <div style={{
-                    color: 'rgba(255, 255, 255, 0.7)',
-                    fontSize: '0.8rem',
-                    textAlign: 'center',
-                    textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
-                    marginTop: '2rem',
-                    paddingTop: '1rem',
-                    borderTop: '1px solid rgba(255, 255, 255, 0.2)'
-                }}>
-                    © 2025 P-Town Point of Sale System
-                </div>
+            </div>
+            
+            <div className="login-footer" style={{
+                position: 'fixed',
+                bottom: '20px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                color: 'rgba(255, 255, 255, 0.8)',
+                fontSize: '0.85rem',
+                textAlign: 'center',
+                textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)',
+                background: 'transparent',
+                padding: 0,
+                borderRadius: 0,
+                width: 'auto',
+                zIndex: 100
+            }}>
+                © 2025 P-Town Point of Sale System
             </div>
         </div>
     );

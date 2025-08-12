@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { dataService } from '../utils/dataService';
 import { useOrderContext } from '../context/OrderContext';
 
 interface Cashier {
@@ -7,7 +8,7 @@ interface Cashier {
     username: string;
     password: string;
     role: 'cashier' | 'waiter' | 'manager';
-    dailyPay: number;
+    dailyPay?: number;
     createdAt: string;
 }
 
@@ -43,20 +44,15 @@ const CashierManagement: React.FC = () => {
     });
 
     useEffect(() => {
-        const savedCashiers = localStorage.getItem('p-town-cashiers');
-        if (savedCashiers) {
-            setCashiers(JSON.parse(savedCashiers));
-        }
-
-        const savedExpenses = localStorage.getItem('p-town-expenses');
-        if (savedExpenses) {
-            setExpenses(JSON.parse(savedExpenses));
-        }
+        // Fetch cashiers from Firebase
+        dataService.getCashiers().then(setCashiers);
+        // ...existing code for expenses (if needed)...
     }, []);
 
     const saveCashiers = (updatedCashiers: Cashier[]) => {
-        setCashiers(updatedCashiers);
-        localStorage.setItem('p-town-cashiers', JSON.stringify(updatedCashiers));
+    setCashiers(updatedCashiers);
+    // No localStorage, sync to Firebase
+    // This function is now only used for UI state
     };
 
     const saveExpenses = (updatedExpenses: Expense[]) => {
@@ -80,24 +76,25 @@ const CashierManagement: React.FC = () => {
             return;
         }
 
-        const cashier: Cashier = {
-            id: Date.now().toString(),
+        const cashier = {
             name: newCashier.name.trim(),
             username: newCashier.username.trim(),
             password: newCashier.password.trim(),
             role: newCashier.role,
-            dailyPay: newCashier.dailyPay,
-            createdAt: new Date().toISOString()
+            dailyPay: newCashier.dailyPay
         };
-
-        saveCashiers([...cashiers, cashier]);
-        setNewCashier({ name: '', username: '', password: '', role: 'cashier', dailyPay: 0 });
-        setShowAddCashier(false);
+        dataService.createCashier(cashier).then(() => {
+            dataService.getCashiers().then(setCashiers);
+            setNewCashier({ name: '', username: '', password: '', role: 'cashier', dailyPay: 0 });
+            setShowAddCashier(false);
+        });
     };
 
     const handleDeleteCashier = (id: string) => {
         if (window.confirm('Are you sure you want to delete this employee account?')) {
-            saveCashiers(cashiers.filter(c => c.id !== id));
+            dataService.deleteCashier(id).then(() => {
+                dataService.getCashiers().then(setCashiers);
+            });
         }
     };
 
@@ -108,7 +105,7 @@ const CashierManagement: React.FC = () => {
             username: cashier.username,
             password: cashier.password,
             role: cashier.role,
-            dailyPay: cashier.dailyPay
+            dailyPay: cashier.dailyPay ?? 0
         });
         setShowAddCashier(true);
     };
@@ -132,7 +129,7 @@ const CashierManagement: React.FC = () => {
             return;
         }
 
-        const updatedCashier: Cashier = {
+        const updatedCashier = {
             ...editingCashier,
             name: newCashier.name.trim(),
             username: newCashier.username.trim(),
@@ -140,11 +137,12 @@ const CashierManagement: React.FC = () => {
             role: newCashier.role,
             dailyPay: newCashier.dailyPay
         };
-
-        saveCashiers(cashiers.map(c => c.id === editingCashier.id ? updatedCashier : c));
-        setNewCashier({ name: '', username: '', password: '', role: 'cashier', dailyPay: 0 });
-        setEditingCashier(null);
-        setShowAddCashier(false);
+        dataService.updateCashier(updatedCashier.id, updatedCashier).then(() => {
+            dataService.getCashiers().then(setCashiers);
+            setNewCashier({ name: '', username: '', password: '', role: 'cashier', dailyPay: 0 });
+            setEditingCashier(null);
+            setShowAddCashier(false);
+        });
     };
 
     const cancelCashierEdit = () => {
@@ -1020,7 +1018,7 @@ const CashierManagement: React.FC = () => {
                                 <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: '600' }}>Employee Payroll</h3>
                             </div>
                             <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>
-                                ₱{cashiers.reduce((total, cashier) => total + cashier.dailyPay, 0).toFixed(2)}
+                                ₱{cashiers.reduce((total, cashier) => total + (cashier.dailyPay ?? 0), 0).toFixed(2)}
                             </div>
                             <div style={{ fontSize: '0.9rem', opacity: 0.9 }}>
                                 Total daily pay for {cashiers.length} employees
@@ -1048,9 +1046,9 @@ const CashierManagement: React.FC = () => {
                                 <div style={{ 
                                     fontSize: '1.5rem', 
                                     fontWeight: 'bold', 
-                                    color: (getTodaysSales() - getTotalExpenses() - cashiers.reduce((total, cashier) => total + cashier.dailyPay, 0)) >= 0 ? '#10b981' : '#ef4444'
+                                    color: (getTodaysSales() - getTotalExpenses() - cashiers.reduce((total, cashier) => total + (cashier.dailyPay ?? 0), 0)) >= 0 ? '#10b981' : '#ef4444'
                                 }}>
-                                    ₱{(getTodaysSales() - getTotalExpenses() - cashiers.reduce((total, cashier) => total + cashier.dailyPay, 0)).toFixed(2)}
+                                    ₱{(getTodaysSales() - getTotalExpenses() - cashiers.reduce((total, cashier) => total + (cashier.dailyPay ?? 0), 0)).toFixed(2)}
                                 </div>
                             </div>
                             
@@ -1074,9 +1072,9 @@ const CashierManagement: React.FC = () => {
                                 <div style={{ 
                                     fontSize: '1.5rem', 
                                     fontWeight: 'bold', 
-                                    color: getTodaysSales() > 0 ? (cashiers.reduce((total, cashier) => total + cashier.dailyPay, 0) / getTodaysSales() * 100) <= 30 ? '#10b981' : '#ef4444' : '#64748b'
+                                    color: getTodaysSales() > 0 ? (cashiers.reduce((total, cashier) => total + (cashier.dailyPay ?? 0), 0) / getTodaysSales() * 100) <= 30 ? '#10b981' : '#ef4444' : '#64748b'
                                 }}>
-                                    {getTodaysSales() > 0 ? (cashiers.reduce((total, cashier) => total + cashier.dailyPay, 0) / getTodaysSales() * 100).toFixed(1) : '0.0'}%
+                                    {getTodaysSales() > 0 ? (cashiers.reduce((total, cashier) => total + (cashier.dailyPay ?? 0), 0) / getTodaysSales() * 100).toFixed(1) : '0.0'}%
                                 </div>
                             </div>
                         </div>

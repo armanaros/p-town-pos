@@ -1,3 +1,20 @@
+// Used for processed/completed orders in context and components
+export type ProcessedOrder = {
+    id: string;
+    items: Record<string, number>;
+    status: 'pending' | 'preparing' | 'ready' | 'served' | 'completed' | 'cancelled';
+    orderType: 'dine-in' | 'take-out';
+    createdAt: string;
+    updatedAt?: string;
+    total: number;
+    cashierName: string;
+    customerName?: string;
+    tableNumber?: number;
+    estimatedTime?: number;
+    cancellationReason?: string;
+    cancelledBy?: string;
+    cancelledAt?: string;
+};
 type MenuItem = {
     id: number;
     name: string;
@@ -72,8 +89,8 @@ type MenuItemProfitability = {
 };
 
 type Order = {
-    id: number;
-    items: Record<number, number>;
+    id: string;
+    items: Record<string, number>;
     status: 'pending' | 'preparing' | 'ready' | 'served' | 'completed' | 'cancelled';
     orderType: 'dine-in' | 'take-out';
     createdAt: string;
@@ -102,5 +119,5 @@ export type {
     PurchaseOrder, 
     StaffPerformance, 
     PeakHourData, 
-    MenuItemProfitability 
+    MenuItemProfitability
 };

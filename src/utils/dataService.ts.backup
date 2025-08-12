@@ -1,0 +1,596 @@
+import { 
+  collection, 
+  doc, 
+  setDoc, 
+  getDocs, 
+  getDoc,
+  onSnapshot, 
+  addDoc, 
+  updateDoc, 
+  deleteDoc,
+  query,
+  orderBy,
+  where,
+  Timestamp 
+} from 'firebase/firestore';
+import { db } from './firebase';
+
+export interface Order {
+    id: string;
+    orderNumber: number;
+    items: { [key: string]: number };
+    total: number;
+    customerName?: string;
+    cashierName?: string;
+    cashierId?: string;
+    status: 'pending' | 'processing' | 'preparing' | 'ready' | 'completed' | 'served' | 'cancelled';
+    createdAt: string;
+    updatedAt: string;
+    cancellationReason?: string;
+    cancelledBy?: string;
+    cancelledAt?: string;
+}export interface MenuItem {
+  id: number;
+  name: string;
+  price: number;
+  category: string;
+  description?: string;
+  available?: boolean;
+}
+
+export interface Cashier {
+  id: string;
+  username: string;
+  password: string;
+  name: string;
+  role: 'cashier' | 'manager' | 'waiter';
+  createdAt: string;
+  isActive: boolean;
+  dailyPay?: number;
+}
+
+export interface InventoryItem {
+  id: string;
+  name: string;
+  quantity: number;
+  cost: number;
+  sellingPrice: number;
+  category: string;
+  lowStockThreshold: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+class DataService {
+  // Settings management for order numbering
+  async getNextOrderNumber(): Promise<number> {
+    try {
+      console.log('🔢 Getting next order number from settings...');
+      
+      const settingsDoc = await getDocs(collection(db, 'settings'));
+      console.log('⚙️ Settings doc empty?', settingsDoc.empty);
+      
+      let currentOrderNumber = 1;
+      
+      if (!settingsDoc.empty) {
+        const settings = settingsDoc.docs[0].data();
+        console.log('⚙️ Current settings:', settings);
+        currentOrderNumber = (settings.lastOrderNumber || 0) + 1;
+        console.log('🔢 Calculated next order number:', currentOrderNumber);
+      } else {
+        console.log('⚙️ No settings found, starting with order number 1');
+      }
+      
+      // Update the counter
+      console.log('💾 Updating order counter to:', currentOrderNumber);
+      if (settingsDoc.empty) {
+        const result = await addDoc(collection(db, 'settings'), { lastOrderNumber: currentOrderNumber });
+        console.log('✅ Created new settings doc:', result.id);
+      } else {
+        await updateDoc(settingsDoc.docs[0].ref, { lastOrderNumber: currentOrderNumber });
+        console.log('✅ Updated existing settings doc');
+      }
+      
+      console.log('🔢 Returning order number:', currentOrderNumber);
+      return currentOrderNumber;
+    } catch (error) {
+      console.error('❌ Error getting next order number:', error);
+      console.error('🔍 Error type:', typeof error);
+      console.error('🔍 Error message:', error instanceof Error ? error.message : 'Unknown error');
+      // Fallback to timestamp-based number if Firebase fails
+      const fallbackNumber = Date.now() % 100000;
+      console.log('🔄 Using fallback order number:', fallbackNumber);
+      return fallbackNumber;
+    }
+  }
+
+  async resetOrderCounter(): Promise<void> {
+    try {
+      const settingsDoc = await getDocs(collection(db, 'settings'));
+      if (!settingsDoc.empty) {
+        await updateDoc(settingsDoc.docs[0].ref, { lastOrderNumber: 0 });
+      } else {
+        await addDoc(collection(db, 'settings'), { lastOrderNumber: 0 });
+      }
+    } catch (error) {
+      console.error('Error resetting order counter:', error);
+      throw error;
+    }
+  }
+
+  // Orders
+  async createOrder(order: Omit<Order, 'id' | 'orderNumber' | 'createdAt' | 'updatedAt'>): Promise<string> {
+    try {
+      console.log('🔥 DataService: Creating order...', order);
+      
+      const now = new Date().toISOString();
+      console.log('📅 Timestamp:', now);
+      
+      const orderNumber = await this.getNextOrderNumber();
+      console.log('🔢 Order number:', orderNumber);
+      
+      // Sanitize order data to prevent undefined values
+      const orderData = {
+        ...order,
+        customerName: order.customerName || 'Walk-in Customer',
+        cashierName: order.cashierName || 'System',
+        cashierId: order.cashierId || 'system',
+        orderNumber,
+        createdAt: now,
+        updatedAt: now
+      };
+      
+      console.log('📦 Final order data:', orderData);
+      console.log('🔗 Database connection status: Attempting to write to Firestore...');
+      
+      const docRef = await addDoc(collection(db, 'orders'), orderData);
+      console.log('✅ Order created successfully! Document ID:', docRef.id);
+      
+      return docRef.id;
+    } catch (error) {
+      console.error('❌ Error creating order in dataService:', error);
+      console.error('🔍 Error type:', typeof error);
+      console.error('🔍 Error message:', error instanceof Error ? error.message : 'Unknown error');
+      console.error('🔍 Error stack:', error instanceof Error ? error.stack : undefined);
+      throw error;
+    }
+  }
+
+  async updateOrder(orderId: string, updates: Partial<Order>): Promise<void> {
+    try {
+      const orderRef = doc(db, 'orders', orderId);
+      await updateDoc(orderRef, {
+        ...updates,
+        updatedAt: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Error updating order:', error);
+      throw error;
+    }
+  }
+
+  async getOrders(): Promise<Order[]> {
+    try {
+      const querySnapshot = await getDocs(
+        query(collection(db, 'orders'), orderBy('createdAt', 'desc'))
+      );
+      
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      } as Order));
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      return [];
+    }
+  }
+
+  subscribeToOrders(callback: (orders: Order[]) => void): () => void {
+    const unsubscribe = onSnapshot(
+      query(collection(db, 'orders'), orderBy('createdAt', 'desc')),
+      (querySnapshot) => {
+        const orders = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        } as Order));
+        callback(orders);
+      },
+      (error) => {
+        console.error('Error in orders subscription:', error);
+      }
+    );
+    
+    return unsubscribe;
+  }
+
+  subscribeToPendingOrders(callback: (orders: Order[]) => void): () => void {
+    console.log('🔔 Setting up pending orders subscription...');
+    
+    const unsubscribe = onSnapshot(
+      query(
+        collection(db, 'orders'), 
+        where('status', '==', 'pending'),
+        orderBy('createdAt', 'asc')
+      ),
+      (querySnapshot) => {
+        console.log('📋 Pending orders subscription update:', {
+          size: querySnapshot.size,
+          empty: querySnapshot.empty,
+          docs: querySnapshot.docs.length
+        });
+        
+        const orders = querySnapshot.docs.map(doc => {
+          const data = doc.data();
+          console.log('📋 Pending order:', { id: doc.id, status: data.status, createdAt: data.createdAt });
+          return {
+            id: doc.id,
+            ...data
+          } as Order;
+        });
+        
+        console.log('📋 Total pending orders found:', orders.length);
+        callback(orders);
+      },
+      (error) => {
+        console.error('❌ Error in pending orders subscription:', error);
+      }
+    );
+    
+    return unsubscribe;
+  }
+
+  // Cashiers
+  async createCashier(cashier: Omit<Cashier, 'id' | 'createdAt' | 'isActive'>): Promise<string> {
+    try {
+      const cashierData = {
+        ...cashier,
+        createdAt: new Date().toISOString(),
+        isActive: true
+      };
+      
+      const docRef = await addDoc(collection(db, 'cashiers'), cashierData);
+      return docRef.id;
+    } catch (error) {
+      console.error('Error creating cashier:', error);
+      throw error;
+    }
+  }
+
+  async getCashiers(): Promise<Cashier[]> {
+    try {
+      const querySnapshot = await getDocs(
+        query(collection(db, 'cashiers'), where('isActive', '==', true))
+      );
+      
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      } as Cashier));
+    } catch (error) {
+      console.error('Error fetching cashiers:', error);
+      return [];
+    }
+  }
+
+  async updateCashier(cashierId: string, updates: Partial<Cashier>): Promise<void> {
+    try {
+      const cashierRef = doc(db, 'cashiers', cashierId);
+      await updateDoc(cashierRef, updates);
+    } catch (error) {
+      console.error('Error updating cashier:', error);
+      throw error;
+    }
+  }
+
+  async deleteCashier(cashierId: string): Promise<void> {
+    try {
+      const cashierRef = doc(db, 'cashiers', cashierId);
+      await updateDoc(cashierRef, { isActive: false });
+    } catch (error) {
+      console.error('Error deleting cashier:', error);
+      throw error;
+    }
+  }
+
+  // Inventory
+  async createInventoryItem(item: Omit<InventoryItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+    try {
+      const now = new Date().toISOString();
+      const itemData = {
+        ...item,
+        createdAt: now,
+        updatedAt: now
+      };
+      
+      const docRef = await addDoc(collection(db, 'inventory'), itemData);
+      return docRef.id;
+    } catch (error) {
+      console.error('Error creating inventory item:', error);
+      throw error;
+    }
+  }
+
+  async updateInventoryItem(itemId: string, updates: Partial<InventoryItem>): Promise<void> {
+    try {
+      const itemRef = doc(db, 'inventory', itemId);
+      await updateDoc(itemRef, {
+        ...updates,
+        updatedAt: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Error updating inventory item:', error);
+      throw error;
+    }
+  }
+
+  async getInventory(): Promise<InventoryItem[]> {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'inventory'));
+      
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      } as InventoryItem));
+    } catch (error) {
+      console.error('Error fetching inventory:', error);
+      return [];
+    }
+  }
+
+  subscribeToInventory(callback: (items: InventoryItem[]) => void): () => void {
+    const unsubscribe = onSnapshot(
+      collection(db, 'inventory'),
+      (querySnapshot) => {
+        const items = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        } as InventoryItem));
+        callback(items);
+      },
+      (error) => {
+        console.error('Error in inventory subscription:', error);
+      }
+    );
+    
+    return unsubscribe;
+  }
+
+  // Menu Items - Simple storage structure
+  async createMenuItem(item: Omit<MenuItem, 'id'>): Promise<void> {
+    try {
+      const currentMenuItems = await this.getMenuItems();
+      const maxId = currentMenuItems.length > 0 ? Math.max(...currentMenuItems.map(item => item.id)) : 0;
+      const newItem: MenuItem = {
+        ...item,
+        id: maxId + 1,
+        available: item.available !== undefined ? item.available : true
+      };
+      
+      await addDoc(collection(db, 'menuItems'), newItem);
+    } catch (error) {
+      console.error('Error creating menu item:', error);
+      throw error;
+    }
+  }
+
+  async updateMenuItem(id: number, updates: Partial<Omit<MenuItem, 'id'>>): Promise<void> {
+    try {
+      const menuItemsRef = collection(db, 'menuItems');
+      const q = query(menuItemsRef, where('id', '==', id));
+      const querySnapshot = await getDocs(q);
+      
+      if (!querySnapshot.empty) {
+        const docRef = querySnapshot.docs[0].ref;
+        await updateDoc(docRef, updates);
+      } else {
+        throw new Error(`Menu item with id ${id} not found`);
+      }
+    } catch (error) {
+      console.error('Error updating menu item:', error);
+      throw error;
+    }
+  }
+
+  async deleteMenuItem(id: number): Promise<void> {
+    try {
+      // Find the document with the matching id in menuItems collection
+      const menuItemsRef = collection(db, 'menuItems');
+      const q = query(menuItemsRef, where('id', '==', id));
+      const querySnapshot = await getDocs(q);
+      
+      if (!querySnapshot.empty) {
+        await deleteDoc(querySnapshot.docs[0].ref);
+      } else {
+        throw new Error(`Menu item with id ${id} not found`);
+      }
+    } catch (error) {
+      console.error('Error deleting menu item:', error);
+      throw error;
+    }
+  }
+
+  async getMenuItems(): Promise<MenuItem[]> {
+    try {
+      const menuItemsRef = collection(db, 'menuItems');
+      const querySnapshot = await getDocs(menuItemsRef);
+      
+      const menuItems: MenuItem[] = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        menuItems.push({
+          id: data.id,
+          name: data.name,
+          price: data.price,
+          category: data.category,
+          description: data.description,
+          available: data.available !== undefined ? data.available : true
+        });
+      });
+      
+      return menuItems.sort((a, b) => a.id - b.id);
+    } catch (error) {
+      console.error('Error fetching menu items:', error);
+      // Return empty array on error
+      return [];
+    }
+  }
+
+  subscribeToMenuItems(callback: (items: MenuItem[]) => void): () => void {
+    const unsubscribe = onSnapshot(
+      collection(db, 'menuItems'),
+      (querySnapshot) => {
+        const menuItems: MenuItem[] = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          menuItems.push({
+            id: data.id,
+            name: data.name,
+            price: data.price,
+            category: data.category,
+            description: data.description,
+            available: data.available !== undefined ? data.available : true
+          });
+        });
+        
+        const sortedItems = menuItems.sort((a, b) => a.id - b.id);
+        callback(sortedItems);
+      },
+      (error) => {
+        console.error('Error in menu subscription:', error);
+        callback([]);
+      }
+    );
+    
+    return unsubscribe;
+  }
+
+  // Utility function to migrate existing localStorage data
+  async migrateLocalData(): Promise<void> {
+    try {
+      console.log('Starting data migration from localStorage to Firebase...');
+      
+      // Migrate orders
+      const localOrders = localStorage.getItem('processedOrders');
+      if (localOrders) {
+        const orders = JSON.parse(localOrders);
+        for (const order of orders) {
+          await this.createOrder({
+            items: order.items,
+            total: order.total,
+            customerName: order.customerName,
+            cashierName: order.cashierName,
+            cashierId: order.cashierId,
+            status: 'completed'
+          });
+        }
+        console.log(`Migrated ${orders.length} orders`);
+      }
+
+      // Migrate cashiers
+      const localCashiers = localStorage.getItem('cashiers');
+      if (localCashiers) {
+        const cashiers = JSON.parse(localCashiers);
+        for (const cashier of cashiers) {
+          await this.createCashier({
+            username: cashier.username,
+            password: cashier.password,
+            name: cashier.name || cashier.username,
+            role: 'cashier'
+          });
+        }
+        console.log(`Migrated ${cashiers.length} cashiers`);
+      }
+
+      // Migrate inventory
+      const localInventory = localStorage.getItem('inventory');
+      if (localInventory) {
+        const inventory = JSON.parse(localInventory);
+        for (const item of inventory) {
+          await this.createInventoryItem({
+            name: item.name,
+            quantity: item.quantity,
+            cost: item.cost || 0,
+            sellingPrice: item.sellingPrice || item.price || 0,
+            category: item.category || 'General',
+            lowStockThreshold: item.lowStockThreshold || 10
+          });
+        }
+        console.log(`Migrated ${inventory.length} inventory items`);
+      }
+
+      console.log('Data migration completed successfully!');
+    } catch (error) {
+      console.error('Error during data migration:', error);
+    }
+  }
+
+  // Data management functions
+  async clearAllData(): Promise<void> {
+    try {
+      console.log('Starting data clear operation...');
+      
+      // Clear orders
+      const ordersSnapshot = await getDocs(collection(db, 'orders'));
+      const orderDeletePromises = ordersSnapshot.docs.map(doc => deleteDoc(doc.ref));
+      await Promise.all(orderDeletePromises);
+      console.log(`Cleared ${ordersSnapshot.docs.length} orders`);
+      
+      // Clear menu items
+      const menuSnapshot = await getDocs(collection(db, 'menuItems'));
+      const menuDeletePromises = menuSnapshot.docs.map(doc => deleteDoc(doc.ref));
+      await Promise.all(menuDeletePromises);
+      console.log(`Cleared ${menuSnapshot.docs.length} menu items`);
+      
+      // Clear cashiers
+      const cashiersSnapshot = await getDocs(collection(db, 'cashiers'));
+      const cashierDeletePromises = cashiersSnapshot.docs.map(doc => deleteDoc(doc.ref));
+      await Promise.all(cashierDeletePromises);
+      console.log(`Cleared ${cashiersSnapshot.docs.length} cashiers`);
+      
+      // Clear inventory
+      const inventorySnapshot = await getDocs(collection(db, 'inventory'));
+      const inventoryDeletePromises = inventorySnapshot.docs.map(doc => deleteDoc(doc.ref));
+      await Promise.all(inventoryDeletePromises);
+      console.log(`Cleared ${inventorySnapshot.docs.length} inventory items`);
+      
+      // Reset order counter
+      await this.resetOrderCounter();
+      console.log('Reset order counter to 0');
+      
+      // Clear local storage as well
+      localStorage.removeItem('orders');
+      localStorage.removeItem('processedOrders');
+      localStorage.removeItem('menuItems');
+      localStorage.removeItem('cashiers');
+      localStorage.removeItem('inventory');
+      console.log('Cleared local storage');
+      
+      console.log('All data cleared successfully! Order numbers will start from 1.');
+    } catch (error) {
+      console.error('Error clearing data:', error);
+      throw error;
+    }
+  }
+
+  async seedInitialData(): Promise<void> {
+    try {
+      console.log('Seeding initial data...');
+      
+      // Only add default admin cashier, no sample menu items
+      await this.createCashier({
+        username: 'admin',
+        password: 'admin123',
+        name: 'Administrator',
+        role: 'manager'
+      });
+      console.log('Added default admin account');
+      
+      console.log('Initial data seeded successfully (admin user only)!');
+    } catch (error) {
+      console.error('Error seeding initial data:', error);
+      throw error;
+    }
+  }
+}
+
+export const dataService = new DataService();

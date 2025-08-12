@@ -1,0 +1,192 @@
+import React, { useState } from 'react';
+import { useOrderContext } from '../context/OrderContext_realtime';
+
+const MenuManagement: React.FC = () => {
+    const { menuItems } = useOrderContext();
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const filteredItems = menuItems.filter(item => 
+        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.category.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    return (
+        <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
+            <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center', 
+                marginBottom: '2rem',
+                flexWrap: 'wrap',
+                gap: '1rem'
+            }}>
+                <h2 style={{ margin: 0, color: '#1f2937', fontSize: '2rem', fontWeight: 'bold' }}>
+                    📋 Menu Items (View Only)
+                </h2>
+                
+                <div style={{ 
+                    background: '#e3f2fd', 
+                    padding: '0.75rem 1.5rem', 
+                    borderRadius: '8px',
+                    border: '2px solid #1976d2',
+                    fontSize: '1rem',
+                    fontWeight: 'bold',
+                    color: '#1976d2'
+                }}>
+                    🔄 Live Sync Active
+                </div>
+            </div>
+
+            {/* Search */}
+            <div style={{ marginBottom: '2rem' }}>
+                <input
+                    type="text"
+                    placeholder="Search menu items..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{
+                        width: '100%',
+                        maxWidth: '400px',
+                        padding: '0.75rem',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '8px',
+                        fontSize: '1rem'
+                    }}
+                />
+            </div>
+
+            {/* Menu Items Grid */}
+            <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', 
+                gap: '1.5rem'
+            }}>
+                {filteredItems.length === 0 ? (
+                    <div style={{ 
+                        gridColumn: '1 / -1',
+                        textAlign: 'center', 
+                        padding: '3rem', 
+                        color: '#6b7280',
+                        fontSize: '1.25rem'
+                    }}>
+                        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🍽️</div>
+                        {searchTerm ? 'No items found matching your search' : 'No menu items available'}
+                    </div>
+                ) : (
+                    filteredItems.map((item) => (
+                        <div
+                            key={item.id}
+                            style={{
+                                background: 'white',
+                                border: '2px solid #e5e7eb',
+                                borderRadius: '12px',
+                                padding: '1.5rem',
+                                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                                transition: 'transform 0.2s',
+                            }}
+                        >
+                            {/* Item Header */}
+                            <div style={{ 
+                                display: 'flex', 
+                                justifyContent: 'space-between', 
+                                alignItems: 'center',
+                                marginBottom: '1rem',
+                                flexWrap: 'wrap',
+                                gap: '0.5rem'
+                            }}>
+                                <h3 style={{ 
+                                    margin: 0, 
+                                    fontSize: '1.25rem', 
+                                    fontWeight: 'bold',
+                                    color: '#1f2937'
+                                }}>
+                                    {item.name}
+                                </h3>
+                                
+                                <div style={{
+                                    background: '#10b981',
+                                    color: 'white',
+                                    padding: '0.5rem 1rem',
+                                    borderRadius: '20px',
+                                    fontSize: '1rem',
+                                    fontWeight: 'bold'
+                                }}>
+                                    ₱{item.price.toFixed(2)}
+                                </div>
+                            </div>
+
+                            {/* Category */}
+                            <div style={{ 
+                                marginBottom: '1rem',
+                                padding: '0.5rem 1rem',
+                                background: '#f3f4f6',
+                                borderRadius: '8px',
+                                display: 'inline-block'
+                            }}>
+                                <strong>Category:</strong> {item.category}
+                            </div>
+
+                            {/* Description */}
+                            {item.description && (
+                                <div style={{ 
+                                    marginBottom: '1rem',
+                                    color: '#6b7280',
+                                    fontSize: '0.9rem',
+                                    lineHeight: '1.5'
+                                }}>
+                                    {item.description}
+                                </div>
+                            )}
+
+                            {/* Item ID */}
+                            <div style={{ 
+                                fontSize: '0.8rem',
+                                color: '#9ca3af',
+                                borderTop: '1px solid #e5e7eb',
+                                paddingTop: '0.5rem'
+                            }}>
+                                ID: {item.id}
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
+
+            {/* Summary */}
+            <div style={{ 
+                marginTop: '3rem',
+                padding: '1.5rem',
+                background: '#f9fafb',
+                borderRadius: '12px',
+                border: '1px solid #e5e7eb'
+            }}>
+                <h3 style={{ margin: '0 0 1rem 0', color: '#1f2937' }}>Menu Summary</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                    <div style={{ textAlign: 'center' }}>
+                        <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#3b82f6' }}>
+                            {menuItems.length}
+                        </div>
+                        <div style={{ color: '#6b7280' }}>Total Items</div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                        <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#10b981' }}>
+                            ₱{menuItems.length > 0 ? 
+                                (menuItems.reduce((sum, item) => sum + item.price, 0) / menuItems.length).toFixed(2) : 
+                                '0.00'
+                            }
+                        </div>
+                        <div style={{ color: '#6b7280' }}>Average Price</div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                        <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#f59e0b' }}>
+                            {new Set(menuItems.map(item => item.category)).size}
+                        </div>
+                        <div style={{ color: '#6b7280' }}>Categories</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default MenuManagement;

@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { SalesData } from './types';
 import { useOrderContext, OrderProvider } from './context/OrderContext';
 import HomePage from './components/HomePage';
 import AdminLogin from './components/AdminLogin';
 import CashierLogin from './components/CashierLogin';
 import CashierDashboard from './components/CashierDashboard';
-import AdminDashboard from './components/AdminDashboard_clean';
-import './styles/main.css';
+import AdminDashboard from './components/AdminDashboard';
+import './styles/main.css?v=2';
 
-type UserRole = 'admin' | 'cashier' | null;
+type UserRole = 'admin' | 'manager' | 'waiter' | 'cashier' | null;
 type AppState = 'home' | 'login' | 'dashboard';
 
 const AppContent = () => {
@@ -44,7 +43,7 @@ const AppContent = () => {
         setLoading(false);
     }, []);
 
-    const handleRoleSelection = (role: 'admin' | 'cashier') => {
+    const handleRoleSelection = (role: 'admin' | 'manager' | 'waiter' | 'cashier') => {
         setUserRole(role);
         setCurrentState('login');
     };
@@ -126,6 +125,10 @@ const AppContent = () => {
     if (currentState === 'login') {
         if (userRole === 'admin') {
             return <AdminLogin onLogin={handleLogin} onBackToHome={handleBackToHome} />;
+        } else if (userRole === 'manager') {
+            return <AdminLogin onLogin={handleLogin} onBackToHome={handleBackToHome} />;
+        } else if (userRole === 'waiter') {
+            return <CashierLogin onLogin={handleLogin} onBackToHome={handleBackToHome} />;
         } else if (userRole === 'cashier') {
             return <CashierLogin onLogin={handleLogin} onBackToHome={handleBackToHome} />;
         }
@@ -135,8 +138,14 @@ const AppContent = () => {
         if (userRole === 'cashier') {
             return <CashierDashboard onLogout={handleLogout} cashierName={cashierName} cashierId={cashierId} cashierRole={cashierRole} />;
         } else if (userRole === 'admin') {
-            // Admin Dashboard
-            return <AdminDashboard onLogout={handleLogout} />;
+            // Admin Dashboard with full access
+            return <AdminDashboard onLogout={handleLogout} userRole={userRole} />;
+        } else if (userRole === 'manager') {
+            // Manager Dashboard with access to Order Queue, Order History, and Menu Management
+            return <AdminDashboard onLogout={handleLogout} userRole={userRole} />;
+        } else if (userRole === 'waiter') {
+            // Waiter Dashboard with limited Order Queue access only
+            return <AdminDashboard onLogout={handleLogout} userRole={userRole} />;
         }
     }
 

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { dataService } from '../utils/dataService';
 import Logo from './Logo';
 
 interface CashierLoginProps {
@@ -35,15 +36,14 @@ const CashierLogin: React.FC<CashierLoginProps> = ({ onLogin, onBackToHome }) =>
         // Simulate authentication delay
         await new Promise(resolve => setTimeout(resolve, 1000));
 
-        // Check against stored cashier accounts
-        const savedCashiers = localStorage.getItem('p-town-cashiers');
-        let isValid = false;
-        let cashierName = '';
-        let cashierId = '';
-        let cashierRole = '';
+        // Fetch cashiers from Firestore
+        try {
+                const cashiers = await dataService.getCashiers();
+            let isValid = false;
+            let cashierName = '';
+            let cashierId = '';
+            let cashierRole = '';
 
-        if (savedCashiers) {
-            const cashiers = JSON.parse(savedCashiers);
             const foundCashier = cashiers.find((cashier: any) => 
                 cashier.username === username && cashier.password === password
             );
@@ -53,28 +53,30 @@ const CashierLogin: React.FC<CashierLoginProps> = ({ onLogin, onBackToHome }) =>
                 cashierId = foundCashier.id;
                 cashierRole = foundCashier.role || 'cashier';
             }
-        }
 
-        // Fallback to default credentials if no cashiers are stored
-        if (!isValid && username === 'cashier' && password === 'cashier123') {
-            isValid = true;
-            cashierName = 'Default Cashier';
-            cashierId = 'default-cashier';
-            cashierRole = 'cashier';
-        }
+            // Fallback to default credentials
+            if (!isValid && username === 'cashier' && password === 'cashier123') {
+                isValid = true;
+                cashierName = 'Default Cashier';
+                cashierId = 'default-cashier';
+                cashierRole = 'cashier';
+            }
 
-        if (isValid) {
-            onLogin(true, cashierName, cashierId, cashierRole);
-        } else {
-            setError('Invalid username or password');
+            if (isValid) {
+                onLogin(true, cashierName, cashierId, cashierRole);
+            } else {
+                setError('Invalid username or password');
+                onLogin(false);
+            }
+        } catch (err) {
+            setError('Login failed. Please try again.');
             onLogin(false);
         }
-        
         setLoading(false);
     };
 
     return (
-        <div style={{
+        <div className="login-main" style={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
@@ -82,145 +84,88 @@ const CashierLogin: React.FC<CashierLoginProps> = ({ onLogin, onBackToHome }) =>
             background: 'linear-gradient(135deg, #e8f5e8 0%, #d1f2d1 50%, #b8e6b8 100%)',
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
         }}>
-            <div style={{
+            <div className="login-container" style={{
                 backgroundColor: 'rgba(255, 255, 255, 0.15)',
                 backdropFilter: 'blur(20px)',
-                padding: '3rem',
-                borderRadius: '20px',
-                boxShadow: '0 20px 60px rgba(76, 175, 80, 0.15), 0 8px 25px rgba(0, 0, 0, 0.08)',
-                width: '100%',
-                maxWidth: '500px',
+                padding: window.innerWidth <= 480 ? '1.5rem' : '2rem',
+                maxWidth: window.innerWidth <= 480 ? '300px' : '340px',
+                margin: '0 auto',
+                width: '85%',
+                borderRadius: '16px',
+                boxShadow: '0 12px 32px rgba(76, 175, 80, 0.12)',
                 position: 'relative',
-                border: '1px solid rgba(255, 255, 255, 0.3)'
-            }} className="login-container">
-                {/* Logo and header */}
-                <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                marginBottom: '100px' // more space for footer
+            }}>
+                <div style={{ textAlign: 'center', marginBottom: '1.2rem' }}>
                     <Logo 
-                        size={200}
+                        size={120}
+                        className="login-logo"
                         style={{ 
-                            margin: '0 auto 1.5rem',
-                            boxShadow: '0 15px 40px rgba(76, 175, 80, 0.2)',
-                            borderRadius: '20px',
-                            width: '240px',
-                            height: '200px'
+                            margin: '0 auto 1rem',
+                            boxShadow: '0 8px 24px rgba(76, 175, 80, 0.12)',
+                            borderRadius: '16px',
+                            width: '120px',
+                            height: '100px'
                         }}
-                        className="logo"
                     />
                     <h2 style={{ 
-                        margin: '0 0 0.5rem 0', 
-                        fontSize: '1.6rem',
+                        margin: '0 0 0.3rem 0', 
+                        fontSize: '1.2rem',
                         fontWeight: '700',
-                        color: 'white',
-                        textShadow: '0 2px 10px rgba(0, 0, 0, 0.3)'
+                        color: '#222', // dark color for visibility
+                        textShadow: '0 1px 2px rgba(255,255,255,0.2)'
                     }}>
                         P-Town POS
                     </h2>
                     <p style={{ 
-                        margin: '0.5rem 0 0 0', 
-                        color: 'rgba(255, 255, 255, 0.9)',
-                        fontSize: '1rem',
-                        textShadow: '0 1px 5px rgba(0, 0, 0, 0.2)'
+                        margin: '0.3rem 0 0 0', 
+                        color: '#333', // dark color for visibility
+                        fontSize: '0.95rem',
+                        textShadow: '0 1px 3px rgba(255,255,255,0.15)'
                     }}>
-                        Cashier Portal
+                        Employee Portal
                     </p>
                 </div>
                 
                 <form onSubmit={handleSubmit}>
-                    <div style={{ marginBottom: '1.5rem' }}>
+                    <div style={{ marginBottom: '1rem' }}>
                         <label style={{ 
                             display: 'block', 
-                            marginBottom: '0.5rem', 
-                            color: 'white',
-                            fontWeight: '500',
-                            fontSize: '0.95rem',
-                            textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)'
+                            marginBottom: '0.3rem', 
+                            color: '#222', // dark color for visibility
+                            fontWeight: '500', 
+                            fontSize: '0.9rem', 
+                            textShadow: '0 1px 2px rgba(255,255,255,0.2)'
                         }}>
                             Username
                         </label>
-                        <input
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            required
-                            placeholder="Enter your username"
-                            style={{
-                                width: '100%',
-                                padding: '1rem',
-                                border: '2px solid #e8e8e8',
-                                borderRadius: '12px',
-                                fontSize: '1rem',
-                                transition: 'all 0.3s ease',
-                                outline: 'none',
-                                fontFamily: 'inherit',
-                                background: '#fafafa'
-                            }}
-                            onFocus={(e) => {
-                                const target = e.target as HTMLInputElement;
-                                target.style.borderColor = '#4caf50';
-                                target.style.background = '#fff';
-                                target.style.boxShadow = '0 0 0 3px rgba(76, 175, 80, 0.1)';
-                            }}
-                            onBlur={(e) => {
-                                const target = e.target as HTMLInputElement;
-                                target.style.borderColor = '#e8e8e8';
-                                target.style.background = '#fafafa';
-                                target.style.boxShadow = 'none';
-                            }}
-                        />
+                        <input className="login-form-input" type="text" value={username} onChange={(e) => setUsername(e.target.value)} required placeholder="Enter your username" style={{ width: '88%', padding: window.innerWidth <= 480 ? '0.5rem 0.8rem' : '0.6rem 1rem', border: '2px solid #e8e8e8', borderRadius: '10px', fontSize: window.innerWidth <= 480 ? '0.88rem' : '0.92rem', background: '#fafafa', margin: '0 auto', display: 'block' }} />
                     </div>
                     
-                    <div style={{ marginBottom: '2rem' }}>
+                    <div style={{ marginBottom: '1.2rem' }}>
                         <label style={{ 
                             display: 'block', 
-                            marginBottom: '0.5rem', 
-                            color: 'white',
-                            fontWeight: '500',
-                            fontSize: '0.95rem',
-                            textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)'
+                            marginBottom: '0.3rem', 
+                            color: '#222', // dark color for visibility
+                            fontWeight: '500', 
+                            fontSize: '0.9rem', 
+                            textShadow: '0 1px 2px rgba(255,255,255,0.2)'
                         }}>
                             Password
                         </label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            placeholder="Enter your password"
-                            style={{
-                                width: '100%',
-                                padding: '1rem',
-                                border: '2px solid #e8e8e8',
-                                borderRadius: '12px',
-                                fontSize: '1rem',
-                                transition: 'all 0.3s ease',
-                                outline: 'none',
-                                fontFamily: 'inherit',
-                                background: '#fafafa'
-                            }}
-                            onFocus={(e) => {
-                                const target = e.target as HTMLInputElement;
-                                target.style.borderColor = '#4caf50';
-                                target.style.background = '#fff';
-                                target.style.boxShadow = '0 0 0 3px rgba(76, 175, 80, 0.1)';
-                            }}
-                            onBlur={(e) => {
-                                const target = e.target as HTMLInputElement;
-                                target.style.borderColor = '#e8e8e8';
-                                target.style.background = '#fafafa';
-                                target.style.boxShadow = 'none';
-                            }}
-                        />
+                        <input className="login-form-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Enter your password" style={{ width: '88%', padding: window.innerWidth <= 480 ? '0.5rem 0.8rem' : '0.6rem 1rem', border: '2px solid #e8e8e8', borderRadius: '10px', fontSize: window.innerWidth <= 480 ? '0.88rem' : '0.92rem', background: '#fafafa', margin: '0 auto', display: 'block' }} />
                     </div>
                     
                     {error && (
                         <div style={{
                             color: '#e53e3e',
-                            marginBottom: '1.5rem',
+                            marginBottom: '1rem',
                             textAlign: 'center',
-                            fontSize: '0.9rem',
-                            padding: '0.75rem',
+                            fontSize: '0.85rem',
+                            padding: '0.5rem',
                             backgroundColor: '#fed7d7',
-                            borderRadius: '8px',
+                            borderRadius: '7px',
                             border: '1px solid #feb2b2'
                         }}>
                             {error}
@@ -228,43 +173,27 @@ const CashierLogin: React.FC<CashierLoginProps> = ({ onLogin, onBackToHome }) =>
                     )}
                     
                     <button
+                        className="login-form-button"
                         type="submit"
                         disabled={loading}
                         style={{
                             width: '100%',
-                            padding: '1rem',
+                            padding: window.innerWidth <= 480 ? '0.6rem' : '0.7rem',
                             background: loading ? '#a0a0a0' : 'linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)',
                             color: 'white',
                             border: 'none',
-                            borderRadius: '12px',
-                            fontSize: '1.1rem',
+                            borderRadius: '10px',
+                            fontSize: window.innerWidth <= 480 ? '0.95rem' : '1rem',
                             fontWeight: '600',
                             cursor: loading ? 'not-allowed' : 'pointer',
-                            transition: 'all 0.3s ease',
-                            boxShadow: loading ? 'none' : '0 4px 15px rgba(76, 175, 80, 0.3)',
-                            transform: loading ? 'none' : 'translateY(0)',
-                            marginBottom: '1rem'
-                        }}
-                        onMouseEnter={(e) => {
-                            if (!loading) {
-                                const target = e.target as HTMLButtonElement;
-                                target.style.transform = 'translateY(-2px)';
-                                target.style.boxShadow = '0 6px 20px rgba(76, 175, 80, 0.4)';
-                            }
-                        }}
-                        onMouseLeave={(e) => {
-                            if (!loading) {
-                                const target = e.target as HTMLButtonElement;
-                                target.style.transform = 'translateY(0)';
-                                target.style.boxShadow = '0 4px 15px rgba(76, 175, 80, 0.3)';
-                            }
+                            boxShadow: loading ? 'none' : '0 2px 8px rgba(76, 175, 80, 0.12)'
                         }}
                     >
                         {loading ? (
                             <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
                                 <span style={{ 
-                                    width: '16px', 
-                                    height: '16px', 
+                                    width: '14px', 
+                                    height: '14px', 
                                     border: '2px solid transparent',
                                     borderTop: '2px solid white',
                                     borderRadius: '50%',
@@ -280,44 +209,37 @@ const CashierLogin: React.FC<CashierLoginProps> = ({ onLogin, onBackToHome }) =>
                     onClick={onBackToHome}
                     style={{
                         width: '100%',
-                        padding: '0.75rem',
+                        padding: window.innerWidth <= 480 ? '0.5rem' : '0.6rem',
                         backgroundColor: 'transparent',
-                        color: '#666',
+                        color: '#222',
                         border: '2px solid #e8e8e8',
-                        borderRadius: '12px',
-                        fontSize: '0.95rem',
+                        borderRadius: '10px',
+                        fontSize: window.innerWidth <= 480 ? '0.85rem' : '0.9rem',
                         cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                        fontWeight: '500'
-                    }}
-                    onMouseEnter={(e) => {
-                        const target = e.target as HTMLButtonElement;
-                        target.style.borderColor = '#4caf50';
-                        target.style.color = '#4caf50';
-                        target.style.background = 'rgba(76, 175, 80, 0.05)';
-                    }}
-                    onMouseLeave={(e) => {
-                        const target = e.target as HTMLButtonElement;
-                        target.style.borderColor = '#e8e8e8';
-                        target.style.color = '#666';
-                        target.style.background = 'transparent';
+                        fontWeight: '500',
+                        marginTop: '0.7rem'
                     }}
                 >
                     ← Back to Home
                 </button>
-                
-                {/* Footer - moved inside container */}
-                <div style={{
-                    color: 'rgba(255, 255, 255, 0.7)',
-                    fontSize: '0.8rem',
-                    textAlign: 'center',
-                    textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
-                    marginTop: '2rem',
-                    paddingTop: '1rem',
-                    borderTop: '1px solid rgba(255, 255, 255, 0.2)'
-                }}>
-                    © 2025 P-Town Point of Sale System
-                </div>
+            </div>
+            
+            <div style={{
+                position: 'fixed',
+                bottom: '20px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                color: '#222',
+                fontSize: '0.85rem',
+                textAlign: 'center',
+                textShadow: '0 1px 2px rgba(255,255,255,0.2)',
+                background: 'transparent',
+                padding: 0,
+                borderRadius: 0,
+                width: 'auto',
+                zIndex: 100
+            }}>
+                © 2025 P-Town Point of Sale System
             </div>
         </div>
     );

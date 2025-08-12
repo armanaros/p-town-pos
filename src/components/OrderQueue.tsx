@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useOrderContext } from '../context/OrderContext';
 
 interface ProcessedOrder {
-    id: number;
-    items: Record<number, number>;
+    id: string;
+    items: Record<string, number>;
     status: 'pending' | 'preparing' | 'ready' | 'served' | 'completed' | 'cancelled';
     orderType: 'dine-in' | 'take-out';
     createdAt: string;
@@ -20,9 +20,10 @@ interface ProcessedOrder {
 
 interface OrderQueueProps {
     currentUser?: { id: string; username: string };
+    userRole?: 'admin' | 'manager' | 'waiter';
 }
 
-const OrderQueue: React.FC<OrderQueueProps> = ({ currentUser }) => {
+const OrderQueue: React.FC<OrderQueueProps> = ({ currentUser, userRole = 'admin' }) => {
     const { 
         getQueueOrders, 
         updateOrderStatus, 
@@ -352,10 +353,11 @@ const OrderQueue: React.FC<OrderQueueProps> = ({ currentUser }) => {
                             <div style={{ display: 'flex', gap: '0.5rem' }}>
                                 {order.status !== 'served' && order.status !== 'cancelled' && order.status !== 'completed' ? (
                                     <>
+                                        {/* Status Update Button - Available to all roles */}
                                         <button
                                             onClick={() => updateOrderStatus(order.id, getNextStatus(order.status) as any)}
                                             style={{
-                                                flex: 1,
+                                                flex: userRole === 'waiter' ? 1 : 'auto',
                                                 padding: '0.75rem',
                                                 backgroundColor: getStatusColor(order.status),
                                                 color: 'white',
@@ -377,32 +379,55 @@ const OrderQueue: React.FC<OrderQueueProps> = ({ currentUser }) => {
                                         >
                                             ✅ {getActionButtonText(order.status)}
                                         </button>
-                                        <button
-                                            onClick={() => handleCancelOrder(order)}
-                                            style={{
+                                        
+                                        {/* Cancel Button - Hidden for waiters */}
+                                        {userRole !== 'waiter' && (
+                                            <button
+                                                onClick={() => handleCancelOrder(order)}
+                                                style={{
+                                                    padding: '0.75rem',
+                                                    backgroundColor: '#dc3545',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '6px',
+                                                    fontSize: '1rem',
+                                                    fontWeight: 'bold',
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.2s'
+                                                }}
+                                                onMouseOver={(e) => {
+                                                    e.currentTarget.style.opacity = '0.8';
+                                                    e.currentTarget.style.transform = 'translateY(-1px)';
+                                                }}
+                                                onMouseOut={(e) => {
+                                                    e.currentTarget.style.opacity = '1';
+                                                    e.currentTarget.style.transform = 'translateY(0)';
+                                                }}
+                                            >
+                                                ❌ Cancel
+                                            </button>
+                                        )}
+                                        
+                                        {/* Waiter Role Indicator */}
+                                        {userRole === 'waiter' && (
+                                            <div style={{
                                                 padding: '0.75rem',
-                                                backgroundColor: '#dc3545',
+                                                backgroundColor: '#6c757d',
                                                 color: 'white',
-                                                border: 'none',
                                                 borderRadius: '6px',
-                                                fontSize: '1rem',
+                                                fontSize: '0.8rem',
                                                 fontWeight: 'bold',
-                                                cursor: 'pointer',
-                                                transition: 'all 0.2s'
-                                            }}
-                                            onMouseOver={(e) => {
-                                                e.currentTarget.style.opacity = '0.8';
-                                                e.currentTarget.style.transform = 'translateY(-1px)';
-                                            }}
-                                            onMouseOut={(e) => {
-                                                e.currentTarget.style.opacity = '1';
-                                                e.currentTarget.style.transform = 'translateY(0)';
-                                            }}
-                                        >
-                                            ❌ Cancel
-                                        </button>
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                minWidth: '80px'
+                                            }}>
+                                                👤 Waiter
+                                            </div>
+                                        )}
                                     </>
                                 ) : order.status === 'served' ? (
+                                    /* Complete Order Button - Available to all roles */
                                     <button
                                         onClick={() => {
                                             if (window.confirm(`Mark order #${order.id} as completed?`)) {

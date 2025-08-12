@@ -19,18 +19,6 @@ const CashierDashboard: React.FC<CashierDashboardProps> = ({ onLogout, cashierNa
     const [activeTab, setActiveTab] = useState<'pos' | 'queue' | 'timetracking' | 'menu' | 'inventory'>('pos');
     const [customerName, setCustomerName] = useState<string>('');
     const [tableNumber, setTableNumber] = useState<number | ''>('');
-    
-    // Simple responsive detection for iPad/tablet
-    const [isTablet, setIsTablet] = useState(window.innerWidth <= 1024);
-    
-    React.useEffect(() => {
-        const handleResize = () => {
-            setIsTablet(window.innerWidth <= 1024);
-        };
-        
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
 
     const addToCart = (itemId: number) => {
         setCart(prev => ({
@@ -84,32 +72,37 @@ const CashierDashboard: React.FC<CashierDashboardProps> = ({ onLogout, cashierNa
 
         addOrder(orderData);
         
-        // Clear the form after successful order
+        // Show success message with order details
+        const itemsList = Object.entries(cart)
+            .map(([itemId, qty]) => {
+                const item = menuItems.find(item => item.id === parseInt(itemId));
+                return `${item?.name} x${qty}`;
+            })
+            .join(', ');
+        
+    // Removed popup alert after processing order
         setCart({});
         setCustomerName('');
         setTableNumber('');
     };
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+        <div className="dashboard-container">
             {/* Header with Tabs */}
-            <header style={{ 
-                padding: '1rem', 
-                borderBottom: '1px solid #ddd',
-                backgroundColor: '#f8f9fa'
-            }}>
+            <header className="dashboard-header">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                     <div>
                         <h2>P-Town POS System</h2>
-                        <div style={{ fontSize: '1rem', color: '#2196f3', fontWeight: '600', marginBottom: '0.5rem' }}>
-                            👤 Cashier: {cashierName}
+                        <div className="dashboard-info" style={{ fontSize: '1rem', color: '#2196f3', fontWeight: '600', marginBottom: '0.5rem' }}>
+                            👤 {cashierRole.charAt(0).toUpperCase() + cashierRole.slice(1)}: {cashierName}
                         </div>
-                        <div style={{ fontSize: '0.9rem', color: '#666' }}>
+                        <div className="dashboard-info" style={{ fontSize: '0.9rem', color: '#666' }}>
                             Today's Sales: ₱{getTodaysSales().toFixed(2)} | Orders: {getTodaysOrderCount()}
                         </div>
                     </div>
-                    <button 
+                    <button
                         onClick={onLogout}
+                        className="logout-button"
                         style={{
                             padding: '0.5rem 1rem',
                             backgroundColor: '#f44336',
@@ -124,31 +117,27 @@ const CashierDashboard: React.FC<CashierDashboardProps> = ({ onLogout, cashierNa
                 </div>
 
                 {/* Tab Navigation */}
-                <div style={{ 
-                    display: 'flex', 
-                    gap: '0',
-                    flexWrap: isTablet ? 'wrap' : 'nowrap',
-                    justifyContent: isTablet ? 'space-around' : 'flex-start'
-                }}>
+                <div className="dashboard-tabs" style={{ display: 'flex', gap: '0' }}>
                     <button
                         onClick={() => setActiveTab('pos')}
+                        className="dashboard-tab"
                         style={{
-                            padding: isTablet ? '1rem 1.2rem' : '0.75rem 1.5rem',
+                            padding: '0.75rem 1.5rem',
                             backgroundColor: activeTab === 'pos' ? '#4caf50' : '#e9ecef',
                             color: activeTab === 'pos' ? 'white' : '#495057',
                             border: '1px solid #dee2e6',
                             borderRadius: '8px 0 0 8px',
                             cursor: 'pointer',
-                            fontSize: isTablet ? '1.1rem' : '1rem',
-                            fontWeight: activeTab === 'pos' ? 'bold' : 'normal',
-                            minHeight: isTablet ? '50px' : '40px',
-                            flex: isTablet ? '1' : 'none'
+                            fontSize: '1rem',
+                            fontWeight: activeTab === 'pos' ? 'bold' : 'normal'
                         }}
                     >
-                        🛒 Point of Sale
+                        <span className="mobile-hidden">🛒 Point of Sale</span>
+                        <span className="mobile-only">🛒 POS</span>
                     </button>
                     <button
                         onClick={() => setActiveTab('queue')}
+                        className="dashboard-tab"
                         style={{
                             padding: '0.75rem 1.5rem',
                             backgroundColor: activeTab === 'queue' ? '#4caf50' : '#e9ecef',
@@ -161,7 +150,8 @@ const CashierDashboard: React.FC<CashierDashboardProps> = ({ onLogout, cashierNa
                             position: 'relative'
                         }}
                     >
-                        📋 Order Queue
+                        <span className="mobile-hidden">📋 Order Queue</span>
+                        <span className="mobile-only">📋 Queue</span>
                         {getPendingOrdersCount() > 0 && (
                             <span style={{
                                 position: 'absolute',
@@ -184,6 +174,7 @@ const CashierDashboard: React.FC<CashierDashboardProps> = ({ onLogout, cashierNa
                     </button>
                     <button
                         onClick={() => setActiveTab('timetracking')}
+                        className="dashboard-tab"
                         style={{
                             padding: '0.75rem 1.5rem',
                             backgroundColor: activeTab === 'timetracking' ? '#4caf50' : '#e9ecef',
@@ -196,12 +187,14 @@ const CashierDashboard: React.FC<CashierDashboardProps> = ({ onLogout, cashierNa
                             fontWeight: activeTab === 'timetracking' ? 'bold' : 'normal'
                         }}
                     >
-                        ⏰ Time Clock
+                        <span className="mobile-hidden">⏰ Time Clock</span>
+                        <span className="mobile-only">⏰ Time</span>
                     </button>
                     {cashierRole === 'manager' && (
                         <>
                             <button
                                 onClick={() => setActiveTab('menu')}
+                                className="dashboard-tab"
                                 style={{
                                     padding: '0.75rem 1.5rem',
                                     backgroundColor: activeTab === 'menu' ? '#4caf50' : '#e9ecef',
@@ -214,10 +207,12 @@ const CashierDashboard: React.FC<CashierDashboardProps> = ({ onLogout, cashierNa
                                     fontWeight: activeTab === 'menu' ? 'bold' : 'normal'
                                 }}
                             >
-                                🍽️ Menu Management
+                                <span className="mobile-hidden">🍽️ Menu Management</span>
+                                <span className="mobile-only">🍽️ Menu</span>
                             </button>
                             <button
                                 onClick={() => setActiveTab('inventory')}
+                                className="dashboard-tab"
                                 style={{
                                     padding: '0.75rem 1.5rem',
                                     backgroundColor: activeTab === 'inventory' ? '#4caf50' : '#e9ecef',
@@ -230,7 +225,8 @@ const CashierDashboard: React.FC<CashierDashboardProps> = ({ onLogout, cashierNa
                                     fontWeight: activeTab === 'inventory' ? 'bold' : 'normal'
                                 }}
                             >
-                                📦 Inventory
+                                <span className="mobile-hidden">📦 Inventory</span>
+                                <span className="mobile-only">📦 Stock</span>
                             </button>
                         </>
                     )}
@@ -238,7 +234,7 @@ const CashierDashboard: React.FC<CashierDashboardProps> = ({ onLogout, cashierNa
             </header>
 
             {/* Tab Content */}
-            <div style={{ flex: 1, overflow: 'hidden' }}>
+            <div className="dashboard-content" style={{ flex: 1, overflow: 'hidden' }}>
                 {activeTab === 'pos' ? (
                     <POSInterface 
                         menuItems={menuItems}
@@ -253,7 +249,6 @@ const CashierDashboard: React.FC<CashierDashboardProps> = ({ onLogout, cashierNa
                         setOrderType={setOrderType}
                         setCustomerName={setCustomerName}
                         setTableNumber={setTableNumber}
-                        isTablet={isTablet}
                     />
                 ) : activeTab === 'queue' ? (
                     <OrderQueue currentUser={{ id: cashierId, username: cashierName }} />
@@ -291,7 +286,6 @@ interface POSInterfaceProps {
     setOrderType: (type: 'dine-in' | 'take-out') => void;
     setCustomerName: (name: string) => void;
     setTableNumber: (table: number | '') => void;
-    isTablet: boolean;
 }
 
 const POSInterface: React.FC<POSInterfaceProps> = ({
@@ -306,25 +300,13 @@ const POSInterface: React.FC<POSInterfaceProps> = ({
     processOrder,
     setOrderType,
     setCustomerName,
-    setTableNumber,
-    isTablet
+    setTableNumber
 }) => {
     return (
-        <div style={{ 
-            display: 'flex', 
-            height: '100%',
-            flexDirection: isTablet ? 'column' : 'row'
-        }}>
+        <div className="pos-interface" style={{ display: 'flex', height: '100%' }}>
             {/* Menu Section */}
-            <div style={{ 
-                flex: isTablet ? 'none' : 2, 
-                padding: isTablet ? '0.8rem' : '1rem', 
-                borderRight: isTablet ? 'none' : '1px solid #ddd',
-                borderBottom: isTablet ? '1px solid #ddd' : 'none',
-                overflow: 'auto',
-                maxHeight: isTablet ? '60vh' : 'none'
-            }}>
-                <h3 style={{ marginTop: 0, fontSize: isTablet ? '1.2rem' : '1.5rem' }}>Menu Items</h3>
+            <div className="menu-section" style={{ flex: 2, padding: '1rem', borderRight: '1px solid #ddd', overflow: 'auto' }}>
+                <h3 style={{ marginTop: 0 }}>Menu Items</h3>
                 
                 {menuItems.length === 0 ? (
                     <div style={{
@@ -338,26 +320,20 @@ const POSInterface: React.FC<POSInterfaceProps> = ({
                         <p>Switch to "Menu Management" tab to add items.</p>
                     </div>
                 ) : (
-                    <div style={{ 
-                        display: 'grid', 
-                        gridTemplateColumns: isTablet 
-                            ? 'repeat(auto-fill, minmax(160px, 1fr))' 
-                            : 'repeat(auto-fill, minmax(200px, 1fr))', 
-                        gap: isTablet ? '0.8rem' : '1rem' 
-                    }}>
+                    <div className="menu-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
                         {menuItems.map(item => (
-                            <div 
+                            <div
                                 key={item.id}
+                                className="menu-item"
                                 style={{
                                     border: '1px solid #ddd',
                                     borderRadius: '8px',
-                                    padding: isTablet ? '0.8rem' : '1rem',
+                                    padding: '1rem',
                                     textAlign: 'center',
                                     cursor: item.available ? 'pointer' : 'not-allowed',
                                     backgroundColor: item.available ? 'white' : '#f5f5f5',
                                     boxShadow: item.available ? '0 2px 4px rgba(0,0,0,0.1)' : '0 1px 2px rgba(0,0,0,0.05)',
                                     transition: 'transform 0.2s, box-shadow 0.2s',
-                                    minHeight: isTablet ? '110px' : '140px',
                                     opacity: item.available ? 1 : 0.6,
                                     position: 'relative'
                                 }}
@@ -422,42 +398,15 @@ const POSInterface: React.FC<POSInterfaceProps> = ({
             </div>
 
             {/* Cart Section */}
-            <div style={{ 
-                flex: isTablet ? 'none' : 1, 
-                padding: isTablet ? '0.8rem' : '1rem', 
-                backgroundColor: '#f9f9f9',
-                minHeight: isTablet ? '40vh' : 'auto',
-                display: 'flex',
-                flexDirection: 'column',
-                height: isTablet ? '40vh' : '100%'
-            }}>
-                <h3 style={{ 
-                    fontSize: isTablet ? '1.2rem' : '1.5rem',
-                    margin: '0 0 1rem 0',
-                    flexShrink: 0
-                }}>Current Order</h3>
+            <div className="cart-section" style={{ flex: 1, padding: '1rem', backgroundColor: '#f9f9f9' }}>
+                <h3>Current Order</h3>
                 
-                <div style={{ 
-                    marginBottom: '1rem',
-                    flexShrink: 0
-                }}>
-                    <label style={{ 
-                        display: 'block', 
-                        marginBottom: '0.5rem', 
-                        fontWeight: 'bold', 
-                        fontSize: isTablet ? '0.9rem' : '1rem', 
-                        color: '#333' 
-                    }}>Order Type:</label>
-                    <div style={{ 
-                        display: 'flex', 
-                        gap: '0', 
-                        width: '100%', 
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)', 
-                        borderRadius: '8px', 
-                        overflow: 'hidden' 
-                    }}>
+                <div className="order-type-section" style={{ marginBottom: '1rem' }}>
+                    <label style={{ display: 'block', marginBottom: '0.75rem', fontWeight: 'bold', fontSize: '1rem', color: '#333' }}>Order Type:</label>
+                    <div className="order-type-buttons" style={{ display: 'flex', gap: '0', width: '100%', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', borderRadius: '8px', overflow: 'hidden' }}>
                         <button
                             onClick={() => setOrderType('dine-in')}
+                            className="order-type-button"
                             style={{
                                 flex: 1,
                                 padding: '1rem',
@@ -502,6 +451,7 @@ const POSInterface: React.FC<POSInterfaceProps> = ({
                         <div style={{ width: '1px', backgroundColor: '#dee2e6' }}></div>
                         <button
                             onClick={() => setOrderType('take-out')}
+                            className="order-type-button"
                             style={{
                                 flex: 1,
                                 padding: '1rem',
@@ -547,7 +497,7 @@ const POSInterface: React.FC<POSInterfaceProps> = ({
                 </div>
 
                 {/* Customer Details */}
-                <div style={{ marginBottom: '1rem' }}>
+                <div className="customer-details" style={{ marginBottom: '1rem' }}>
                     {orderType === 'dine-in' ? (
                         <div style={{ marginBottom: '0.5rem' }}>
                             <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.9rem', fontWeight: 'bold' }}>
@@ -592,17 +542,7 @@ const POSInterface: React.FC<POSInterfaceProps> = ({
                     )}
                 </div>
 
-                {/* Cart Items - Scrollable Section */}
-                <div style={{ 
-                    marginBottom: '1rem', 
-                    maxHeight: isTablet ? '25vh' : '300px', 
-                    overflowY: 'auto',
-                    flex: 1,
-                    border: '1px solid #e0e0e0',
-                    borderRadius: '8px',
-                    padding: '0.5rem',
-                    backgroundColor: 'white'
-                }}>
+                <div className="cart-items" style={{ marginBottom: '1rem', maxHeight: '400px', overflowY: 'auto' }}>
                     {Object.keys(cart).length === 0 ? (
                         <p style={{ color: '#666', fontStyle: 'italic' }}>Cart is empty</p>
                     ) : (
@@ -611,20 +551,20 @@ const POSInterface: React.FC<POSInterfaceProps> = ({
                             if (!item) return null;
                             
                             return (
-                                <div key={itemId} style={{ 
-                                    display: 'flex', 
-                                    justifyContent: 'space-between', 
+                                <div key={itemId} className="cart-item" style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
                                     alignItems: 'center',
                                     padding: '0.5rem',
                                     borderBottom: '1px solid #eee'
                                 }}>
                                     <div>
-                                        <div style={{ fontWeight: 'bold' }}>{item.name}</div>
-                                        <div style={{ fontSize: '0.9rem', color: '#666' }}>
+                                        <div className="cart-item-name" style={{ fontWeight: 'bold' }}>{item.name}</div>
+                                        <div className="cart-item-price" style={{ fontSize: '0.9rem', color: '#666' }}>
                                             ₱{item.price} x {quantity}
                                         </div>
                                     </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                    <div className="cart-controls" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                         <button 
                                             onClick={() => removeFromCart(item.id)}
                                             style={{ 
@@ -659,45 +599,25 @@ const POSInterface: React.FC<POSInterfaceProps> = ({
                     )}
                 </div>
 
-                {/* Checkout Section - Sticky Footer */}
-                <div style={{ 
-                    borderTop: '2px solid #ddd', 
-                    paddingTop: '1rem',
-                    backgroundColor: '#f9f9f9',
-                    marginTop: 'auto',
-                    flexShrink: 0
-                }}>
-                    <div style={{ 
-                        fontSize: isTablet ? '1.1rem' : '1.2rem', 
-                        fontWeight: 'bold', 
-                        marginBottom: '1rem',
-                        textAlign: 'center',
-                        padding: '0.5rem',
-                        backgroundColor: 'white',
-                        borderRadius: '6px',
-                        border: '2px solid #4caf50'
-                    }}>
+                <div style={{ borderTop: '2px solid #ddd', paddingTop: '1rem' }}>
+                    <div className="cart-total" style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '1rem' }}>
                         Total: ₱{calculateTotal().toFixed(2)}
                     </div>
                     
                     <button
                         onClick={processOrder}
                         disabled={Object.keys(cart).length === 0}
+                        className="process-order-button"
                         style={{
                             width: '100%',
-                            padding: isTablet ? '1.2rem' : '1rem',
+                            padding: '1rem',
                             backgroundColor: Object.keys(cart).length === 0 ? '#ccc' : '#4caf50',
                             color: 'white',
                             border: 'none',
-                            borderRadius: '8px',
-                            fontSize: isTablet ? '1.2rem' : '1.1rem',
+                            borderRadius: '4px',
+                            fontSize: '1.1rem',
                             fontWeight: 'bold',
-                            cursor: Object.keys(cart).length === 0 ? 'not-allowed' : 'pointer',
-                            boxShadow: Object.keys(cart).length === 0 ? 'none' : '0 4px 8px rgba(76, 175, 80, 0.3)',
-                            transition: 'all 0.2s ease',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.5px',
-                            minHeight: isTablet ? '60px' : '50px'
+                            cursor: Object.keys(cart).length === 0 ? 'not-allowed' : 'pointer'
                         }}
                     >
                         Process Order

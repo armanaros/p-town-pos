@@ -1,6 +1,12 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Order, SalesData, MenuItem } from '../types';
 
+// Utility to convert ProcessedOrder to Order (id as string)
+const processedOrderToOrder = (order: ProcessedOrder): Order => ({
+    ...order,
+    id: String(order.id)
+});
+
 interface ProcessedOrder {
     id: number;
     items: Record<number, number>;
@@ -248,10 +254,9 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
             date,
             totalSales: data.total,
             orderCount: data.orders,
-            orders: processedOrders.filter(order => 
-                order.status === 'completed' && 
-                order.createdAt.startsWith(date)
-            )
+            orders: processedOrders
+                .filter(order => order.status === 'completed' && order.createdAt.startsWith(date))
+                .map(processedOrderToOrder)
         }));
     };
 
